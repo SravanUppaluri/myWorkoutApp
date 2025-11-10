@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ===== EXERCISE DATABASE RULES =====
+    // Allow read access to exercises for all authenticated users
+    match /exercises/{exerciseId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only admin/server can modify exercises
+    }
+    
+    // Allow read access to safety guidelines for all authenticated users
+    match /safety_guidelines/{guidelineId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only admin/server can modify guidelines
+    }
+    
+    // ===== USER DATA RULES =====
+    // User profiles - users can read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // User workouts - users can read/write their own workout data
+    match /workouts/{workoutId} {
+      allow read, write, delete: if request.auth != null && 
+        (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // User workouts - users can read/write their own workout data
+    match /user_workouts/{workoutId} {
+      allow read, write: if request.auth != null && 
+        (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // Generated workouts - users can read/write their own generated workouts
+    match /generated_workouts/{workoutId} {
+      allow read, write: if request.auth != null && 
+        (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // User workout sessions - users can read/write their own sessions
+    match /workout_sessions/{sessionId} {
+      allow read, write: if request.auth != null && 
+        (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // User preferences and settings
+    match /user_preferences/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // User progress statistics (updated after finishing a workout)
+    match /user_progress/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // ===== WORKOUT TEMPLATES =====
+    // Public workout templates - read only for authenticated users
+    match /workout_templates/{templateId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only admin can modify templates
+    }
+    
+    // ===== ANALYTICS AND LOGGING =====
+    // User analytics - users can read their own analytics
+    match /user_analytics/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false; // Only server can write analytics
+    }
+    
+    // Workout logs - users can read/write their own logs
+    match /workout_logs/{logId} {
+      allow read, write: if request.auth != null && 
+        (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if request.auth != null && 
+        request.resource.data.userId == request.auth.uid;
+    }
+    
+    // ===== DEVELOPMENT RULES (Remove in production) =====
+    // Temporary rule for testing - REMOVE THIS IN PRODUCTION
+    match /{document=**} {
+      allow read: if request.auth != null;
+    }
+  }
+}

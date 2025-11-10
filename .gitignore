@@ -1,0 +1,177 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Platform-specific build directories
+**/build/
+**/out/
+**/target/
+
+# iOS specific
+ios/Pods/
+ios/Runner.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+ios/.symlinks/
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+
+# macOS specific
+macos/Pods/
+macos/Runner.xcworkspace/xcuserdata/
+macos/Runner.xcodeproj/xcuserdata/
+
+# Windows specific
+windows/flutter/ephemeral/
+
+# Linux specific
+linux/flutter/ephemeral/
+
+# Web specific
+web/flutter_service_worker.js
+web/version.json
+
+# Project-specific unwanted files
+*.csv
+*_output.txt
+*.ps1
+*.sh
+*.bak
+*.old
+*.orig
+*.tmp
+*.cache
+desktop.ini
+Thumbs.db
+
+# Firebase cache and logs
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Firebase Functions
+firebase/functions/node_modules/
+firebase/functions/.env
+firebase/functions/lib/
+firebase/functions/logs/
+firebase/functions/dist/
+firebase/functions/.nyc_output/
+firebase/functions/coverage/
+
+# Node.js dependencies (anywhere in project)
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# Coverage reports
+coverage/
+lcov.info
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.gr.dart
+
+# Development tools
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+
+# Testing and debugging
+test/coverage/
+integration_test/screenshots/
+screenshots/
+*.test.dart.snapshot
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs and temporary files
+logs/
+*.log.*
+*.pid
+*.seed
+*.pid.lock
+
+# Runtime data
+pids/
+*.tgz
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# ESLint cache
+.eslintcache
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional eslint cache
+.eslintcache
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Dart analysis server cache
+.analysis_server_cache/

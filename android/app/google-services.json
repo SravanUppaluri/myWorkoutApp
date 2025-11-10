@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61388203199",
+    "project_id": "exerciselist-da299",
+    "storage_bucket": "exerciselist-da299.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61388203199:android:58a7a902c57c944e58520a",
+        "android_client_info": {
+          "package_name": "com.example.workout_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaLONZn1TlWkwbm29JGDomjEX0wKFl-TY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
