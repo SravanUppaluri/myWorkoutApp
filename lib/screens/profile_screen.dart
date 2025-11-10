@@ -23,13 +23,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, authProvider, child) {
         final user = authProvider.user;
 
-        // Debug: Print current user data
-        if (user != null) {
-          print('Profile screen - Current user goalData: ${user.goalData}');
-          print('Profile screen - Current user goals: ${user.goals}');
-          print('Profile screen - Current user motivation: ${user.motivation}');
-        }
-
         if (user == null) {
           return SafeArea(
             child: Center(
@@ -66,8 +59,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary.withOpacity(0.1),
-                        AppColors.primary.withOpacity(0.05),
+                        AppColors.primary.withValues(alpha: 0.1),
+                        AppColors.primary.withValues(alpha: 0.05),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -119,7 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         user.email,
                         style: AppTextStyles.bodyText1.copyWith(
                           color: isDarkMode
-                              ? AppColors.darkOnBackground.withOpacity(0.7)
+                              ? AppColors.darkOnBackground.withValues(
+                                  alpha: 0.7,
+                                )
                               : AppColors.darkGray,
                         ),
                         textAlign: TextAlign.center,
@@ -136,8 +131,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (user.fitnessLevel.isNotEmpty)
                             Chip(
                               label: Text(user.fitnessLevel),
-                              backgroundColor: AppColors.primary.withOpacity(
-                                0.1,
+                              backgroundColor: AppColors.primary.withValues(
+                                alpha: 0.1,
                               ),
                               labelStyle: const TextStyle(
                                 color: AppColors.primary,
@@ -312,7 +307,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: () {
                       // Navigate to goal setting form
-                      print('User goal data being passed: ${user.goalData}');
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => GoalSettingFormScreen(
@@ -321,7 +315,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             existingGoalData:
                                 user.goalData, // Pass existing goal data
                             onComplete: (goalData) async {
-                              print('Goal data received from form: $goalData');
                               final authProvider = Provider.of<AuthProvider>(
                                 context,
                                 listen: false,
@@ -336,9 +329,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 hasCompletedOnboarding: true,
                               );
 
-                              print(
-                                'Updating user with: goalData=${updatedUser.goalData}, goals=${updatedUser.goals}',
-                              );
                               await authProvider.updateUserProfile(updatedUser);
 
                               if (context.mounted) {
