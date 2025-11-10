@@ -344,10 +344,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Column(
@@ -408,7 +408,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.secondary.withOpacity(0.1),
+                            color: AppColors.secondary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Column(
@@ -744,7 +744,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
             label,
             style: TextStyle(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.darkOnSurface.withOpacity(0.8)
+                  ? AppColors.darkOnSurface.withValues(alpha: 0.8)
                   : AppColors.darkGray,
             ),
           ),
@@ -1154,10 +1154,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.15),
+                            color: AppColors.primary.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: AppColors.primary.withOpacity(0.4),
+                              color: AppColors.primary.withValues(alpha: 0.4),
                               width: 2,
                             ),
                           ),
@@ -1194,7 +1194,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                       vertical: 6,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.surface.withOpacity(0.8),
+                                      color: AppColors.surface.withValues(
+                                        alpha: 0.8,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -1245,10 +1247,10 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: AppColors.primary.withOpacity(0.3),
+                              color: AppColors.primary.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -1426,7 +1428,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
         return Card(
           margin: const EdgeInsets.only(bottom: AppDimensions.marginMedium),
           elevation: isCompleted ? 4 : 1,
-          color: isCompleted ? AppColors.primary.withOpacity(0.1) : null,
+          color: isCompleted ? AppColors.primary.withValues(alpha: 0.1) : null,
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: isCompleted
@@ -1549,7 +1551,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                     padding: const EdgeInsets.all(AppDimensions.paddingMedium),
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? AppColors.primary.withOpacity(0.1)
+                          ? AppColors.primary.withValues(alpha: 0.1)
                           : null,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
@@ -1781,7 +1783,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                 color: isDarkMode ? AppColors.darkSurface : AppColors.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -1855,7 +1857,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 color: isDarkMode
-                                    ? AppColors.darkOnSurface.withOpacity(0.7)
+                                    ? AppColors.darkOnSurface.withValues(
+                                        alpha: 0.7,
+                                      )
                                     : AppColors.darkGray,
                               ),
                             ),
@@ -1905,8 +1909,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                       hintText: 'Add workout notes...',
                       hintStyle: TextStyle(
                         color: isDarkMode
-                            ? AppColors.darkOnSurface.withOpacity(0.5)
-                            : AppColors.darkGray.withOpacity(0.7),
+                            ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                            : AppColors.darkGray.withValues(alpha: 0.7),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -1914,7 +1918,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                       ),
                       fillColor: isDarkMode
                           ? AppColors.darkBackground
-                          : AppColors.lightGray.withOpacity(0.3),
+                          : AppColors.lightGray.withValues(alpha: 0.3),
                       filled: true,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -1983,7 +1987,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                   margin: const EdgeInsets.only(top: 8),
                                   padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: AppColors.orange.withOpacity(0.1),
+                                    color: AppColors.orange.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
@@ -2119,7 +2125,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                           border: Border(
                             bottom: BorderSide(
                               color: isDarkMode
-                                  ? AppColors.darkOnSurface.withOpacity(0.1)
+                                  ? AppColors.darkOnSurface.withValues(
+                                      alpha: 0.1,
+                                    )
                                   : AppColors.lightGray,
                               width: 1,
                             ),
@@ -2154,8 +2162,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: isDarkMode
-                                        ? AppColors.darkOnSurface.withOpacity(
-                                            0.6,
+                                        ? AppColors.darkOnSurface.withValues(
+                                            alpha: 0.6,
                                           )
                                         : AppColors.darkGray,
                                   ),
@@ -2181,9 +2189,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                         borderSide: BorderSide(
                                           color: isDarkMode
                                               ? AppColors.darkOnSurface
-                                                    .withOpacity(0.3)
-                                              : AppColors.darkGray.withOpacity(
-                                                  0.3,
+                                                    .withValues(alpha: 0.3)
+                                              : AppColors.darkGray.withValues(
+                                                  alpha: 0.3,
                                                 ),
                                         ),
                                       ),
@@ -2192,9 +2200,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                         borderSide: BorderSide(
                                           color: isDarkMode
                                               ? AppColors.darkOnSurface
-                                                    .withOpacity(0.3)
-                                              : AppColors.darkGray.withOpacity(
-                                                  0.3,
+                                                    .withValues(alpha: 0.3)
+                                              : AppColors.darkGray.withValues(
+                                                  alpha: 0.3,
                                                 ),
                                         ),
                                       ),
@@ -2245,9 +2253,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                         borderSide: BorderSide(
                                           color: isDarkMode
                                               ? AppColors.darkOnSurface
-                                                    .withOpacity(0.3)
-                                              : AppColors.darkGray.withOpacity(
-                                                  0.3,
+                                                    .withValues(alpha: 0.3)
+                                              : AppColors.darkGray.withValues(
+                                                  alpha: 0.3,
                                                 ),
                                         ),
                                       ),
@@ -2256,9 +2264,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                         borderSide: BorderSide(
                                           color: isDarkMode
                                               ? AppColors.darkOnSurface
-                                                    .withOpacity(0.3)
-                                              : AppColors.darkGray.withOpacity(
-                                                  0.3,
+                                                    .withValues(alpha: 0.3)
+                                              : AppColors.darkGray.withValues(
+                                                  alpha: 0.3,
                                                 ),
                                         ),
                                       ),

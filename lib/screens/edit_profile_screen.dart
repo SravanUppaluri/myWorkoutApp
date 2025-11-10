@@ -475,7 +475,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       }
                     });
                   },
-                  selectedColor: AppColors.primary.withOpacity(0.2),
+                  selectedColor: AppColors.primary.withValues(alpha: 0.2),
                   labelStyle: TextStyle(
                     color: isSelected ? AppColors.primary : null,
                     fontWeight: isSelected ? FontWeight.w600 : null,

@@ -141,8 +141,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           if (user.age > 0)
                             Chip(
                               label: Text('${user.age} years'),
-                              backgroundColor: AppColors.secondary.withOpacity(
-                                0.1,
+                              backgroundColor: AppColors.secondary.withValues(
+                                alpha: 0.1,
                               ),
                               labelStyle: const TextStyle(
                                 color: AppColors.secondary,
@@ -153,8 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               label: Text(
                                 '${user.weight.toStringAsFixed(1)} kg',
                               ),
-                              backgroundColor: AppColors.secondary.withOpacity(
-                                0.1,
+                              backgroundColor: AppColors.secondary.withValues(
+                                alpha: 0.1,
                               ),
                               labelStyle: const TextStyle(
                                 color: AppColors.secondary,
@@ -194,8 +194,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             .map(
                               (goal) => Chip(
                                 label: Text(goal),
-                                backgroundColor: AppColors.primary.withOpacity(
-                                  0.1,
+                                backgroundColor: AppColors.primary.withValues(
+                                  alpha: 0.1,
                                 ),
                                 labelStyle: const TextStyle(
                                   color: AppColors.primary,

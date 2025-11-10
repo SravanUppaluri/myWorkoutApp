@@ -567,7 +567,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
           color: AppColors.background,
           boxShadow: [
             BoxShadow(
-              color: AppColors.darkGray.withOpacity(0.1),
+              color: AppColors.darkGray.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, -2),
             ),
@@ -664,7 +664,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
           Icon(
             Icons.fitness_center_outlined,
             size: 48,
-            color: AppColors.darkGray.withOpacity(0.5),
+            color: AppColors.darkGray.withValues(alpha: 0.5),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
           Text(
@@ -675,7 +675,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
           Text(
             'Tap "Browse Exercise Library" to select exercises from your collection',
             style: AppTextStyles.bodyText2.copyWith(
-              color: AppColors.darkGray.withOpacity(0.7),
+              color: AppColors.darkGray.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -735,7 +735,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: AppColors.secondary.withOpacity(0.1),
+              color: AppColors.secondary.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
@@ -832,8 +832,8 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: personalRecord > 0
-                  ? AppColors.primary.withOpacity(0.1)
-                  : Colors.grey.withOpacity(0.1),
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : Colors.grey.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -884,7 +884,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
       margin: const EdgeInsets.only(bottom: AppDimensions.marginSmall),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppColors.primary.withOpacity(0.1),
+          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
           child: Text(
             '${index + 1}',
             style: const TextStyle(
@@ -907,8 +907,8 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: personalRecord > 0
-                    ? AppColors.primary.withOpacity(0.1)
-                    : Colors.grey.withOpacity(0.1),
+                    ? AppColors.primary.withValues(alpha: 0.1)
+                    : Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

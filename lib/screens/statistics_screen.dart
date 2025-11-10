@@ -111,8 +111,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         boxShadow: [
           BoxShadow(
             color: isDarkMode
-                ? Colors.black.withOpacity(0.3)
-                : Colors.black.withOpacity(0.1),
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -224,16 +224,16 @@ class _StatisticsScreenState extends State<StatisticsScreen>
     if (isToday) {
       dayNameColor = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
       backgroundColor = isDarkMode
-          ? AppColors.darkPrimary.withOpacity(0.2)
-          : AppColors.primary.withOpacity(0.2);
+          ? AppColors.darkPrimary.withValues(alpha: 0.2)
+          : AppColors.primary.withValues(alpha: 0.2);
       borderColor = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
       textColor = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
       dotColor = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
     } else if (hasWorkout) {
       dayNameColor = isDarkMode ? AppColors.darkGray : AppColors.darkGray;
       backgroundColor = isDarkMode
-          ? AppColors.forestGreen.withOpacity(0.2)
-          : AppColors.forestGreen.withOpacity(0.1);
+          ? AppColors.forestGreen.withValues(alpha: 0.2)
+          : AppColors.forestGreen.withValues(alpha: 0.1);
       borderColor = AppColors.forestGreen;
       textColor = AppColors.forestGreen;
       dotColor = AppColors.forestGreen;
@@ -392,8 +392,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                 boxShadow: [
                   BoxShadow(
                     color: isDarkMode
-                        ? Colors.black.withOpacity(0.3)
-                        : Colors.black.withOpacity(0.1),
+                        ? Colors.black.withValues(alpha: 0.3)
+                        : Colors.black.withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -407,8 +407,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                       border: Border(
                         bottom: BorderSide(
                           color: isDarkMode
-                              ? Colors.grey.withOpacity(0.3)
-                              : Colors.grey.withOpacity(0.2),
+                              ? Colors.grey.withValues(alpha: 0.3)
+                              : Colors.grey.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
@@ -558,7 +558,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             'Completed Workouts',
             style: AppTextStyles.bodyText1.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDarkMode ? Colors.white.withOpacity(0.9) : null,
+              color: isDarkMode ? Colors.white.withValues(alpha: 0.9) : null,
             ),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
@@ -609,7 +609,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                           ),
                           border: isDarkMode
                               ? Border.all(
-                                  color: Colors.grey.withOpacity(0.2),
+                                  color: Colors.grey.withValues(alpha: 0.2),
                                   width: 0.5,
                                 )
                               : null,
@@ -632,8 +632,8 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                               .copyWith(
                                                 fontWeight: FontWeight.w600,
                                                 color: isDarkMode
-                                                    ? Colors.white.withOpacity(
-                                                        0.9,
+                                                    ? Colors.white.withValues(
+                                                        alpha: 0.9,
                                                       )
                                                     : null,
                                               ),
@@ -746,7 +746,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             'Last 30 Days Progress',
             style: AppTextStyles.bodyText1.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDarkMode ? Colors.white.withOpacity(0.9) : null,
+              color: isDarkMode ? Colors.white.withValues(alpha: 0.9) : null,
             ),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
@@ -787,7 +787,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                             ),
                             border: isDarkMode
                                 ? Border.all(
-                                    color: Colors.grey.withOpacity(0.2),
+                                    color: Colors.grey.withValues(alpha: 0.2),
                                     width: 0.5,
                                   )
                                 : null,
@@ -800,7 +800,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                 style: AppTextStyles.bodyText2.copyWith(
                                   fontWeight: FontWeight.w600,
                                   color: isDarkMode
-                                      ? Colors.white.withOpacity(0.9)
+                                      ? Colors.white.withValues(alpha: 0.9)
                                       : null,
                                 ),
                               ),
@@ -818,7 +818,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                         'Week of ${entry.key}',
                                         style: TextStyle(
                                           color: isDarkMode
-                                              ? Colors.white.withOpacity(0.8)
+                                              ? Colors.white.withValues(
+                                                  alpha: 0.8,
+                                                )
                                               : null,
                                         ),
                                       ),
@@ -862,7 +864,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             'Your Fitness Goals',
             style: AppTextStyles.bodyText1.copyWith(
               fontWeight: FontWeight.w600,
-              color: isDarkMode ? Colors.white.withOpacity(0.9) : null,
+              color: isDarkMode ? Colors.white.withValues(alpha: 0.9) : null,
             ),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
@@ -877,7 +879,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                           size: 48,
                           color: isDarkMode
                               ? Colors.grey[600]
-                              : AppColors.darkGray.withOpacity(0.5),
+                              : AppColors.darkGray.withValues(alpha: 0.5),
                         ),
                         const SizedBox(height: AppDimensions.marginSmall),
                         Text(
@@ -928,7 +930,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                             decoration: BoxDecoration(
                               color: isDarkMode
                                   ? const Color(0xFF2A2A2A)
-                                  : AppColors.primary.withOpacity(0.1),
+                                  : AppColors.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(
                                 AppDimensions.radiusSmall,
                               ),
@@ -936,7 +938,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                   ? Border.all(
                                       color: const Color(
                                         0xFF64B5F6,
-                                      ).withOpacity(0.3),
+                                      ).withValues(alpha: 0.3),
                                       width: 0.5,
                                     )
                                   : null,
@@ -974,7 +976,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                                   motivation,
                                   style: AppTextStyles.bodyText2.copyWith(
                                     color: isDarkMode
-                                        ? Colors.white.withOpacity(0.85)
+                                        ? Colors.white.withValues(alpha: 0.85)
                                         : null,
                                   ),
                                 ),
@@ -1001,11 +1003,11 @@ class _StatisticsScreenState extends State<StatisticsScreen>
 
     // Adjust colors for dark mode
     final cardColor = isDarkMode
-        ? color.withOpacity(0.2)
-        : color.withOpacity(0.1);
-    final iconColor = isDarkMode ? color.withOpacity(0.9) : color;
-    final titleColor = isDarkMode ? color.withOpacity(0.9) : color;
-    final valueColor = isDarkMode ? color.withOpacity(0.95) : color;
+        ? color.withValues(alpha: 0.2)
+        : color.withValues(alpha: 0.1);
+    final iconColor = isDarkMode ? color.withValues(alpha: 0.9) : color;
+    final titleColor = isDarkMode ? color.withValues(alpha: 0.9) : color;
+    final valueColor = isDarkMode ? color.withValues(alpha: 0.95) : color;
 
     return Container(
       padding: const EdgeInsets.all(AppDimensions.paddingMedium),
@@ -1013,7 +1015,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         color: cardColor,
         borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
         border: isDarkMode
-            ? Border.all(color: color.withOpacity(0.3), width: 0.5)
+            ? Border.all(color: color.withValues(alpha: 0.3), width: 0.5)
             : null,
       ),
       child: Column(
@@ -1058,7 +1060,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
             : Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
         border: isDarkMode
-            ? Border.all(color: Colors.grey.withOpacity(0.2), width: 0.5)
+            ? Border.all(color: Colors.grey.withValues(alpha: 0.2), width: 0.5)
             : null,
       ),
       child: Row(
@@ -1087,7 +1089,9 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                   value,
                   style: AppTextStyles.bodyText2.copyWith(
                     fontWeight: FontWeight.w500,
-                    color: isDarkMode ? Colors.white.withOpacity(0.9) : null,
+                    color: isDarkMode
+                        ? Colors.white.withValues(alpha: 0.9)
+                        : null,
                   ),
                 ),
               ],
@@ -1226,7 +1230,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.forestGreen.withOpacity(0.1),
+            color: AppColors.forestGreen.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(
@@ -1307,7 +1311,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.lightGray.withOpacity(0.3),
+                      color: AppColors.lightGray.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.lightGray),
                     ),
@@ -1351,7 +1355,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.lightGray.withOpacity(0.5)),
+        border: Border.all(color: AppColors.lightGray.withValues(alpha: 0.5)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1410,13 +1414,13 @@ class _StatisticsScreenState extends State<StatisticsScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: set.completed
-                      ? AppColors.forestGreen.withOpacity(0.1)
-                      : AppColors.cardinalRed.withOpacity(0.1),
+                      ? AppColors.forestGreen.withValues(alpha: 0.1)
+                      : AppColors.cardinalRed.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
                     color: set.completed
-                        ? AppColors.forestGreen.withOpacity(0.3)
-                        : AppColors.cardinalRed.withOpacity(0.3),
+                        ? AppColors.forestGreen.withValues(alpha: 0.3)
+                        : AppColors.cardinalRed.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(
@@ -1459,7 +1463,7 @@ class _StatisticsScreenState extends State<StatisticsScreen>
               width: double.infinity,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.lightGray.withOpacity(0.2),
+                color: AppColors.lightGray.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(

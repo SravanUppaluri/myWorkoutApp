@@ -259,12 +259,12 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                   gradient: LinearGradient(
                     colors: isDarkMode
                         ? [
-                            AppColors.darkPrimary.withOpacity(0.2),
-                            AppColors.darkPrimary.withOpacity(0.1),
+                            AppColors.darkPrimary.withValues(alpha: 0.2),
+                            AppColors.darkPrimary.withValues(alpha: 0.1),
                           ]
                         : [
-                            AppColors.primary.withOpacity(0.1),
-                            AppColors.primary.withOpacity(0.05),
+                            AppColors.primary.withValues(alpha: 0.1),
+                            AppColors.primary.withValues(alpha: 0.05),
                           ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -294,8 +294,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                                     style: AppTextStyles.bodyText2.copyWith(
                                       // Smaller text
                                       color: isDarkMode
-                                          ? AppColors.darkOnSurface.withOpacity(
-                                              0.7,
+                                          ? AppColors.darkOnSurface.withValues(
+                                              alpha: 0.7,
                                             )
                                           : AppColors.darkGray,
                                     ),
@@ -397,8 +397,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
           icon,
           size: 16,
           color: isDarkMode
-              ? AppColors.darkPrimary.withOpacity(0.8)
-              : AppColors.primary.withOpacity(0.8),
+              ? AppColors.darkPrimary.withValues(alpha: 0.8)
+              : AppColors.primary.withValues(alpha: 0.8),
         ),
         const SizedBox(width: 8),
         Flexible(
@@ -406,8 +406,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
             '$label: $value',
             style: AppTextStyles.caption.copyWith(
               color: isDarkMode
-                  ? AppColors.darkOnSurface.withOpacity(0.9)
-                  : AppColors.onSurface.withOpacity(0.9),
+                  ? AppColors.darkOnSurface.withValues(alpha: 0.9)
+                  : AppColors.onSurface.withValues(alpha: 0.9),
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
@@ -430,8 +430,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
             Icons.fitness_center_outlined,
             size: 80,
             color: isDarkMode
-                ? AppColors.darkOnSurface.withOpacity(0.5)
-                : AppColors.darkGray.withOpacity(0.5),
+                ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                : AppColors.darkGray.withValues(alpha: 0.5),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
           Text(
@@ -445,7 +445,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
             'Edit this workout to add exercises',
             style: AppTextStyles.bodyText2.copyWith(
               color: isDarkMode
-                  ? AppColors.darkOnSurface.withOpacity(0.7)
+                  ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                   : AppColors.darkGray,
             ),
           ),
@@ -482,8 +482,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
         border: Border(
           bottom: BorderSide(
             color: isDarkMode
-                ? AppColors.darkOnSurface.withOpacity(0.1)
-                : AppColors.lightGray.withOpacity(0.3),
+                ? AppColors.darkOnSurface.withValues(alpha: 0.1)
+                : AppColors.lightGray.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -499,8 +499,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                 height: 24,
                 decoration: BoxDecoration(
                   color: isDarkMode
-                      ? AppColors.darkPrimary.withOpacity(0.2)
-                      : AppColors.primary.withOpacity(0.1),
+                      ? AppColors.darkPrimary.withValues(alpha: 0.2)
+                      : AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
@@ -535,7 +535,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                         exercise.primaryMuscles.join(', '),
                         style: AppTextStyles.caption.copyWith(
                           color: isDarkMode
-                              ? AppColors.darkOnSurface.withOpacity(0.7)
+                              ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                               : AppColors.darkGray,
                         ),
                       ),
@@ -587,7 +587,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
                 style: AppTextStyles.caption.copyWith(
                   fontStyle: FontStyle.italic,
                   color: isDarkMode
-                      ? AppColors.darkOnSurface.withOpacity(0.8)
+                      ? AppColors.darkOnSurface.withValues(alpha: 0.8)
                       : AppColors.darkGray,
                 ),
               ),
@@ -608,7 +608,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
           icon,
           size: 16,
           color: isDarkMode
-              ? AppColors.darkOnSurface.withOpacity(0.7)
+              ? AppColors.darkOnSurface.withValues(alpha: 0.7)
               : AppColors.darkGray,
         ),
         const SizedBox(width: 6),

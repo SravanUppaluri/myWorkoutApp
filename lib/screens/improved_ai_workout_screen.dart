@@ -140,7 +140,7 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
         children: [
           if (_isGenerating)
             LinearProgressIndicator(
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
             ),
 
@@ -212,8 +212,8 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
           color: isSelected
               ? AppColors.primary
               : (isDarkMode
-                    ? AppColors.darkBackground.withOpacity(0.5)
-                    : AppColors.background.withOpacity(0.5)),
+                    ? AppColors.darkBackground.withValues(alpha: 0.5)
+                    : AppColors.background.withValues(alpha: 0.5)),
           borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
           border: Border.all(
             color: isSelected ? AppColors.primary : Colors.transparent,
@@ -284,8 +284,8 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
             'Generate a personalized workout in seconds. Just select your preferences and let AI create the perfect workout for you.',
             style: AppTextStyles.bodyText2.copyWith(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.darkOnSurface.withOpacity(0.8)
-                  : AppColors.onSurface.withOpacity(0.8),
+                  ? AppColors.darkOnSurface.withValues(alpha: 0.8)
+                  : AppColors.onSurface.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: AppDimensions.marginLarge),
@@ -363,7 +363,7 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
                           border: Border.all(
                             color: isSelected
                                 ? AppColors.primary
-                                : AppColors.primary.withOpacity(0.3),
+                                : AppColors.primary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(
@@ -460,12 +460,12 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
                         vertical: AppDimensions.paddingSmall,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(
                           AppDimensions.radiusMedium,
                         ),
                         border: Border.all(
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: AppColors.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(

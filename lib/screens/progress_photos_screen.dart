@@ -93,7 +93,7 @@ class _ProgressPhotosScreenState extends State<ProgressPhotosScreen> {
         children: [
           // Tips card
           Card(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingMedium),
               child: Column(
@@ -294,7 +294,7 @@ class _ProgressPhotosScreenState extends State<ProgressPhotosScreen> {
                           selectedType = type;
                         });
                       },
-                      selectedColor: AppColors.primary.withOpacity(0.2),
+                      selectedColor: AppColors.primary.withValues(alpha: 0.2),
                       labelStyle: TextStyle(
                         color: isSelected ? AppColors.primary : null,
                         fontWeight: isSelected ? FontWeight.w600 : null,

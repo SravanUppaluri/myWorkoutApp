@@ -110,7 +110,7 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withOpacity(0.1),
+                    color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -152,7 +152,7 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -338,7 +338,7 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
           padding: EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+            side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
           ),
         ),
       ),

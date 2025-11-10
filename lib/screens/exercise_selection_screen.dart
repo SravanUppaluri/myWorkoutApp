@@ -381,7 +381,7 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
           if (_selectedExercises.isNotEmpty)
             Container(
               padding: const EdgeInsets.all(AppDimensions.paddingSmall),
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               child: Row(
                 children: [
                   Icon(
@@ -453,7 +453,7 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
             Icon(
               Icons.search_off,
               size: 80,
-              color: AppColors.darkGray.withOpacity(0.5),
+              color: AppColors.darkGray.withValues(alpha: 0.5),
             ),
             const SizedBox(height: AppDimensions.marginMedium),
             Text('No exercises found', style: AppTextStyles.headline3),
@@ -473,10 +473,10 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
               ),
               padding: const EdgeInsets.all(AppDimensions.paddingMedium),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                 border: Border.all(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -543,7 +543,7 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
           Icon(
             Icons.fitness_center_outlined,
             size: 80,
-            color: AppColors.darkGray.withOpacity(0.5),
+            color: AppColors.darkGray.withValues(alpha: 0.5),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
           Text('Loading exercises...', style: AppTextStyles.headline3),
@@ -568,8 +568,8 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
           elevation: isSelected ? 4 : 1,
           color: isSelected
               ? (isDarkMode
-                    ? AppColors.darkPrimary.withOpacity(0.2)
-                    : AppColors.primary.withOpacity(0.1))
+                    ? AppColors.darkPrimary.withValues(alpha: 0.2)
+                    : AppColors.primary.withValues(alpha: 0.1))
               : (isDarkMode ? AppColors.darkSurface : null),
           margin: const EdgeInsets.only(bottom: AppDimensions.marginSmall),
           child: ListTile(
@@ -577,8 +577,8 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
               backgroundColor: isSelected
                   ? (isDarkMode ? AppColors.darkPrimary : AppColors.primary)
                   : (isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.3)
-                        : AppColors.lightGray.withOpacity(0.3)),
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.3)
+                        : AppColors.lightGray.withValues(alpha: 0.3)),
               child: Icon(
                 isSelected ? Icons.check : Icons.fitness_center,
                 color: isSelected
@@ -606,8 +606,8 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
                     'Muscles: ${exercise.primaryMuscles.join(', ')}',
                     style: AppTextStyles.bodyText2.copyWith(
                       color: isDarkMode
-                          ? AppColors.darkOnSurface.withOpacity(0.8)
-                          : AppColors.onSurface.withOpacity(0.8),
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.8)
+                          : AppColors.onSurface.withValues(alpha: 0.8),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -617,7 +617,7 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
                     'Equipment: ${exercise.equipment.join(', ')}',
                     style: AppTextStyles.caption.copyWith(
                       color: isDarkMode
-                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                           : AppColors.darkGray,
                     ),
                     maxLines: 1,
@@ -734,7 +734,7 @@ class _ExerciseConfigurationDialogState
               style: TextStyle(
                 fontSize: 14,
                 color: isDarkMode
-                    ? AppColors.darkOnSurface.withOpacity(0.7)
+                    ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                     : AppColors.darkGray,
               ),
             ),
@@ -745,7 +745,7 @@ class _ExerciseConfigurationDialogState
                 style: TextStyle(
                   fontSize: 14,
                   color: isDarkMode
-                      ? AppColors.darkOnSurface.withOpacity(0.7)
+                      ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                       : AppColors.darkGray,
                 ),
               ),

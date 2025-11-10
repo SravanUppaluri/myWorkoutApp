@@ -194,8 +194,8 @@ class TemplateUIService {
             'Select a workout split to instantly generate your 7-day progressive plan. Each split creates a complete week of workouts that unlock day by day.',
             style: AppTextStyles.bodyText2.copyWith(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.darkOnSurface.withOpacity(0.8)
-                  : AppColors.onSurface.withOpacity(0.8),
+                  ? AppColors.darkOnSurface.withValues(alpha: 0.8)
+                  : AppColors.onSurface.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: AppDimensions.marginLarge),
@@ -293,8 +293,8 @@ class TemplateUIService {
                 'Select your workout split',
                 style: TextStyle(
                   color: isDarkMode
-                      ? AppColors.darkOnSurface.withOpacity(0.7)
-                      : AppColors.onSurface.withOpacity(0.7),
+                      ? AppColors.darkOnSurface.withValues(alpha: 0.7)
+                      : AppColors.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               decoration: InputDecoration(
@@ -329,8 +329,10 @@ class TemplateUIService {
                             category.description,
                             style: AppTextStyles.caption.copyWith(
                               color: isDarkMode
-                                  ? AppColors.darkOnSurface.withOpacity(0.7)
-                                  : AppColors.onSurface.withOpacity(0.7),
+                                  ? AppColors.darkOnSurface.withValues(
+                                      alpha: 0.7,
+                                    )
+                                  : AppColors.onSurface.withValues(alpha: 0.7),
                             ),
                           ),
                         ],
@@ -402,8 +404,8 @@ class TemplateUIService {
                             : 'Use pre-defined mock workout templates',
                         style: AppTextStyles.caption.copyWith(
                           color: isDarkMode
-                              ? AppColors.darkOnSurface.withOpacity(0.7)
-                              : AppColors.onSurface.withOpacity(0.7),
+                              ? AppColors.darkOnSurface.withValues(alpha: 0.7)
+                              : AppColors.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -468,16 +470,16 @@ class TemplateUIService {
                         Icons.search_off,
                         size: 48,
                         color: isDarkMode
-                            ? AppColors.darkOnSurface.withOpacity(0.5)
-                            : AppColors.onSurface.withOpacity(0.5),
+                            ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                            : AppColors.onSurface.withValues(alpha: 0.5),
                       ),
                       const SizedBox(height: AppDimensions.marginMedium),
                       Text(
                         'No templates available for ${_selectedTemplateCategory?.displayName}',
                         style: AppTextStyles.bodyText1.copyWith(
                           color: isDarkMode
-                              ? AppColors.darkOnSurface.withOpacity(0.7)
-                              : AppColors.onSurface.withOpacity(0.7),
+                              ? AppColors.darkOnSurface.withValues(alpha: 0.7)
+                              : AppColors.onSurface.withValues(alpha: 0.7),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -511,7 +513,9 @@ class TemplateUIService {
                     ),
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: AppColors.primary.withOpacity(0.1),
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.1,
+                        ),
                         child: Icon(
                           _selectedTemplateCategory?.icon ??
                               Icons.fitness_center,
@@ -605,10 +609,12 @@ class TemplateUIService {
               padding: const EdgeInsets.all(AppDimensions.paddingMedium),
               decoration: BoxDecoration(
                 color: isDarkMode
-                    ? AppColors.darkBackground.withOpacity(0.3)
-                    : AppColors.background.withOpacity(0.3),
+                    ? AppColors.darkBackground.withValues(alpha: 0.3)
+                    : AppColors.background.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
-                border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -627,8 +633,8 @@ class TemplateUIService {
                     _selectedTemplate?.description ?? '',
                     style: AppTextStyles.bodyText2.copyWith(
                       color: isDarkMode
-                          ? AppColors.darkOnSurface.withOpacity(0.8)
-                          : AppColors.onSurface.withOpacity(0.8),
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.8)
+                          : AppColors.onSurface.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -675,9 +681,9 @@ class TemplateUIService {
         vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

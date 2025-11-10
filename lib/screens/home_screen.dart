@@ -530,13 +530,13 @@ class _DashboardTabState extends State<DashboardTab> {
         color: isDarkMode ? AppColors.darkSurface : AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: isDarkMode
-            ? Border.all(color: AppColors.darkGray.withOpacity(0.3))
+            ? Border.all(color: AppColors.darkGray.withValues(alpha: 0.3))
             : null,
         boxShadow: isDarkMode
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -550,7 +550,7 @@ class _DashboardTabState extends State<DashboardTab> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 20),
@@ -627,10 +627,10 @@ class _DashboardTabState extends State<DashboardTab> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDarkMode
-            ? AppColors.darkBackground.withOpacity(0.5)
-            : AppColors.lightGray.withOpacity(0.3),
+            ? AppColors.darkBackground.withValues(alpha: 0.5)
+            : AppColors.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -644,7 +644,7 @@ class _DashboardTabState extends State<DashboardTab> {
                   title,
                   style: AppTextStyles.caption.copyWith(
                     color: isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.7)
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                         : AppColors.darkGray,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -676,13 +676,13 @@ class _DashboardTabState extends State<DashboardTab> {
         color: isDarkMode ? AppColors.darkSurface : AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: isDarkMode
-            ? Border.all(color: AppColors.darkGray.withOpacity(0.3))
+            ? Border.all(color: AppColors.darkGray.withValues(alpha: 0.3))
             : null,
         boxShadow: isDarkMode
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -696,7 +696,7 @@ class _DashboardTabState extends State<DashboardTab> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.steelBlue.withOpacity(0.1),
+                  color: AppColors.steelBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -885,8 +885,8 @@ class _DashboardTabState extends State<DashboardTab> {
           getDrawingHorizontalLine: (value) {
             return FlLine(
               color: isDarkMode
-                  ? AppColors.darkGray.withOpacity(0.2)
-                  : AppColors.lightGray.withOpacity(0.5),
+                  ? AppColors.darkGray.withValues(alpha: 0.2)
+                  : AppColors.lightGray.withValues(alpha: 0.5),
               strokeWidth: 1,
             );
           },
@@ -905,13 +905,13 @@ class _DashboardTabState extends State<DashboardTab> {
         color: isDarkMode ? AppColors.darkSurface : AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: isDarkMode
-            ? Border.all(color: AppColors.darkGray.withOpacity(0.3))
+            ? Border.all(color: AppColors.darkGray.withValues(alpha: 0.3))
             : null,
         boxShadow: isDarkMode
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -925,7 +925,7 @@ class _DashboardTabState extends State<DashboardTab> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -1000,7 +1000,9 @@ class _DashboardTabState extends State<DashboardTab> {
       } else if (workoutDaysInWeek >= 4) {
         barColor = AppColors.forestGreen; // Good consistency (4+ days)
       } else {
-        barColor = Colors.redAccent.withOpacity(0.7); // Below target (< 4 days)
+        barColor = Colors.redAccent.withValues(
+          alpha: 0.7,
+        ); // Below target (< 4 days)
       }
 
       barGroups.add(
@@ -1078,8 +1080,8 @@ class _DashboardTabState extends State<DashboardTab> {
           getDrawingHorizontalLine: (value) {
             return FlLine(
               color: isDarkMode
-                  ? AppColors.darkGray.withOpacity(0.2)
-                  : AppColors.lightGray.withOpacity(0.5),
+                  ? AppColors.darkGray.withValues(alpha: 0.2)
+                  : AppColors.lightGray.withValues(alpha: 0.5),
               strokeWidth: 1,
             );
           },
@@ -1099,13 +1101,13 @@ class _DashboardTabState extends State<DashboardTab> {
         color: isDarkMode ? AppColors.darkSurface : AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: isDarkMode
-            ? Border.all(color: AppColors.darkGray.withOpacity(0.3))
+            ? Border.all(color: AppColors.darkGray.withValues(alpha: 0.3))
             : null,
         boxShadow: isDarkMode
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -1119,7 +1121,7 @@ class _DashboardTabState extends State<DashboardTab> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.forestGreen.withOpacity(0.1),
+                  color: AppColors.forestGreen.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -1166,17 +1168,20 @@ class _DashboardTabState extends State<DashboardTab> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDarkMode
-            ? AppColors.darkBackground.withOpacity(0.5)
-            : AppColors.lightGray.withOpacity(0.3),
+            ? AppColors.darkBackground.withValues(alpha: 0.5)
+            : AppColors.lightGray.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.primary.withOpacity(0.1), width: 1),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: 0.1),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(
@@ -1204,7 +1209,7 @@ class _DashboardTabState extends State<DashboardTab> {
                   '${_formatDuration(session.duration)} • ${sessionCalories.round()} cal',
                   style: AppTextStyles.caption.copyWith(
                     color: isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.7)
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                         : AppColors.darkGray,
                   ),
                 ),
@@ -1215,8 +1220,8 @@ class _DashboardTabState extends State<DashboardTab> {
             _formatTimeAgo(session.completedAt),
             style: AppTextStyles.caption.copyWith(
               color: isDarkMode
-                  ? AppColors.darkOnSurface.withOpacity(0.5)
-                  : AppColors.darkGray.withOpacity(0.7),
+                  ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                  : AppColors.darkGray.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -1353,7 +1358,7 @@ class _DashboardTabState extends State<DashboardTab> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary.withOpacity(0.8),
+            AppColors.primary.withValues(alpha: 0.8),
             AppColors.primary,
             const Color(0xFFFF6B35), // Orange-red for "burning"
           ],
@@ -1363,7 +1368,7 @@ class _DashboardTabState extends State<DashboardTab> {
         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -1376,7 +1381,7 @@ class _DashboardTabState extends State<DashboardTab> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(
                     AppDimensions.radiusMedium,
                   ),
@@ -1409,7 +1414,7 @@ class _DashboardTabState extends State<DashboardTab> {
                           ? '$currentStreak consecutive weeks strong!'
                           : '$currentWeekDays days this week - keep going!',
                       style: AppTextStyles.bodyText2.copyWith(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -1429,7 +1434,7 @@ class _DashboardTabState extends State<DashboardTab> {
                   Text(
                     'This Week Progress',
                     style: AppTextStyles.bodyText2.copyWith(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -1447,7 +1452,7 @@ class _DashboardTabState extends State<DashboardTab> {
                 borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
                 child: LinearProgressIndicator(
                   value: (currentWeekDays / 3).clamp(0.0, 1.0),
-                  backgroundColor: Colors.white.withOpacity(0.3),
+                  backgroundColor: Colors.white.withValues(alpha: 0.3),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     currentWeekDays >= 3 ? Colors.greenAccent : Colors.white,
                   ),
@@ -1460,7 +1465,7 @@ class _DashboardTabState extends State<DashboardTab> {
                     ? '🎉 Week goal achieved! Keep the streak alive!'
                     : 'Need ${3 - currentWeekDays} more day${3 - currentWeekDays != 1 ? 's' : ''} to maintain streak',
                 style: AppTextStyles.caption.copyWith(
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -1478,7 +1483,7 @@ class _DashboardTabState extends State<DashboardTab> {
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: Border.all(
           color: isDarkMode
-              ? AppColors.darkOnSurface.withOpacity(0.3)
+              ? AppColors.darkOnSurface.withValues(alpha: 0.3)
               : AppColors.lightGray,
           width: 1,
         ),
@@ -1510,11 +1515,11 @@ class _DashboardTabState extends State<DashboardTab> {
             style: AppTextStyles.caption.copyWith(
               color: _isSmartGenerationAvailable
                   ? (isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.7)
-                        : AppColors.onSurface.withOpacity(0.7))
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.7)
+                        : AppColors.onSurface.withValues(alpha: 0.7))
                   : (isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.5)
-                        : AppColors.onSurface.withOpacity(0.5)),
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                        : AppColors.onSurface.withValues(alpha: 0.5)),
             ),
           ),
           const SizedBox(height: AppDimensions.marginMedium),
@@ -1549,7 +1554,9 @@ class _DashboardTabState extends State<DashboardTab> {
                           color: isSelected
                               ? AppColors.primary
                               : (isDarkMode
-                                    ? AppColors.darkOnSurface.withOpacity(0.3)
+                                    ? AppColors.darkOnSurface.withValues(
+                                        alpha: 0.3,
+                                      )
                                     : AppColors.lightGray),
                         ),
                       ),
@@ -1589,13 +1596,13 @@ class _DashboardTabState extends State<DashboardTab> {
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: isDarkMode
-                  ? AppColors.darkSurface.withOpacity(0.5)
-                  : AppColors.lightGray.withOpacity(0.3),
+                  ? AppColors.darkSurface.withValues(alpha: 0.5)
+                  : AppColors.lightGray.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: isDarkMode
-                    ? AppColors.darkOnSurface.withOpacity(0.2)
-                    : AppColors.lightGray.withOpacity(0.5),
+                    ? AppColors.darkOnSurface.withValues(alpha: 0.2)
+                    : AppColors.lightGray.withValues(alpha: 0.5),
               ),
             ),
             child: Row(
@@ -1604,8 +1611,8 @@ class _DashboardTabState extends State<DashboardTab> {
                   Icons.info_outline,
                   size: 16,
                   color: isDarkMode
-                      ? AppColors.darkOnSurface.withOpacity(0.7)
-                      : AppColors.onSurface.withOpacity(0.7),
+                      ? AppColors.darkOnSurface.withValues(alpha: 0.7)
+                      : AppColors.onSurface.withValues(alpha: 0.7),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -1613,8 +1620,8 @@ class _DashboardTabState extends State<DashboardTab> {
                     'Smart generation needs 4+ workouts in the past 7 days. You currently have $_recentWorkoutsCount.',
                     style: AppTextStyles.caption.copyWith(
                       color: isDarkMode
-                          ? AppColors.darkOnSurface.withOpacity(0.7)
-                          : AppColors.onSurface.withOpacity(0.7),
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.7)
+                          : AppColors.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ),
@@ -1634,8 +1641,8 @@ class _DashboardTabState extends State<DashboardTab> {
               color: _isSmartGenerationAvailable
                   ? AppColors.onPrimary
                   : (isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.5)
-                        : AppColors.onSurface.withOpacity(0.5)),
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                        : AppColors.onSurface.withValues(alpha: 0.5)),
             ),
             label: Text(
               _isSmartGenerationAvailable
@@ -1645,8 +1652,8 @@ class _DashboardTabState extends State<DashboardTab> {
                 color: _isSmartGenerationAvailable
                     ? AppColors.onPrimary
                     : (isDarkMode
-                          ? AppColors.darkOnSurface.withOpacity(0.5)
-                          : AppColors.onSurface.withOpacity(0.5)),
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                          : AppColors.onSurface.withValues(alpha: 0.5)),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1654,13 +1661,13 @@ class _DashboardTabState extends State<DashboardTab> {
               backgroundColor: _isSmartGenerationAvailable
                   ? AppColors.primary
                   : (isDarkMode
-                        ? AppColors.darkSurface.withOpacity(0.3)
-                        : AppColors.lightGray.withOpacity(0.3)),
+                        ? AppColors.darkSurface.withValues(alpha: 0.3)
+                        : AppColors.lightGray.withValues(alpha: 0.3)),
               foregroundColor: _isSmartGenerationAvailable
                   ? AppColors.onPrimary
                   : (isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.5)
-                        : AppColors.onSurface.withOpacity(0.5)),
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.5)
+                        : AppColors.onSurface.withValues(alpha: 0.5)),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
