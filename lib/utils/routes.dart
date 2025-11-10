@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/workouts_screen.dart';
-import '../screens/exercises_screen.dart';
+import '../screens/exercise_selection_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
@@ -46,7 +46,7 @@ class AppRoutes {
 
       case exercises:
         return MaterialPageRoute(
-          builder: (context) => const ExercisesScreen(),
+          builder: (context) => const ExerciseSelectionScreen(),
           settings: settings,
         );
 

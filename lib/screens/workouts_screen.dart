@@ -6,7 +6,7 @@ import '../providers/workout_provider.dart';
 import '../providers/auth_provider.dart';
 import 'create_workout_screen.dart';
 import 'workout_detail_screen.dart';
-import 'exercises_screen.dart';
+import 'exercise_selection_screen.dart';
 import 'improved_ai_workout_screen.dart';
 import 'workout_session_screen.dart';
 
@@ -313,7 +313,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ExercisesScreen(),
+                  builder: (context) => const ExerciseSelectionScreen(),
                 ),
               );
             },

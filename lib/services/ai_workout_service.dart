@@ -1,5 +1,4 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/workout.dart';
@@ -8,29 +7,13 @@ import '../models/exercise.dart';
 class AIWorkoutService {
   late final FirebaseFunctions _functions;
 
-  // Toggle between local backend and Firebase Functions
-  static const bool _useLocalBackend =
-      false; // Set to false to use Firebase Functions
-  static const String _localBaseUrl = 'http://localhost:3000/api';
-
   AIWorkoutService() {
     _functions = FirebaseFunctions.instanceFor(region: 'us-central1');
-
-    // For development on web, use the emulator
-    if (kDebugMode && kIsWeb && !_useLocalBackend) {
-      // Uncomment this line if you want to use the local emulator during development
-      // _functions.useFunctionsEmulator('localhost', 5001);
-    }
   }
 
   String get _apiBaseUrl {
-    if (_useLocalBackend) {
-      return _localBaseUrl;
-    }
     return 'https://us-central1-exerciselist-da299.cloudfunctions.net';
   }
-
-  bool get _isUsingLocalBackend => _useLocalBackend && kDebugMode;
 
   /// Generate a complete workout using AI based on user preferences
   Future<Workout?> generateWorkout(Map<String, dynamic> workoutRequest) async {
@@ -43,70 +26,9 @@ class AIWorkoutService {
       flattenedRequest['requestId'] =
           'req_${DateTime.now().millisecondsSinceEpoch}';
 
-      print(
-        'DEBUG: AIWorkoutService.generateWorkout called with flattened request: $flattenedRequest',
-      );
-      print('DEBUG: Goal parameter: ${flattenedRequest['goal']}');
-      print(
-        'DEBUG: Using ${_isUsingLocalBackend ? 'LOCAL BACKEND' : 'FIREBASE FUNCTIONS'}',
-      );
-
-      if (_isUsingLocalBackend) {
-        return await _generateWorkoutLocal(flattenedRequest);
-      } else {
-        return await _generateWorkoutFirebase(flattenedRequest);
-      }
+      return await _generateWorkoutFirebase(flattenedRequest);
     } catch (e) {
       print('Error generating workout with AI: $e');
-      rethrow;
-    }
-  }
-
-  /// Generate workout using local backend
-  Future<Workout?> _generateWorkoutLocal(
-    Map<String, dynamic> workoutRequest,
-  ) async {
-    try {
-      print('🚀 Calling local backend: $_apiBaseUrl/workout/generate');
-
-      final response = await http.post(
-        Uri.parse('$_apiBaseUrl/workout/generate'),
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'WorkoutApp/1.0',
-        },
-        body: jsonEncode(workoutRequest),
-      );
-
-      print('📡 Local backend response: ${response.statusCode}');
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-
-        if (responseData['success'] == true && responseData['data'] != null) {
-          print(
-            '✅ Local backend success - MCP Enhanced: ${responseData['meta']?['mcpEnhanced'] ?? false}',
-          );
-          return _parseAIWorkoutResponse(responseData['data'], workoutRequest);
-        } else {
-          throw Exception('Invalid response format from local backend');
-        }
-      } else if (response.statusCode == 429) {
-        throw Exception('Rate limit exceeded. Please try again later.');
-      } else {
-        final errorData = jsonDecode(response.body);
-        throw Exception(
-          errorData['error']?['message'] ?? 'Failed to generate workout',
-        );
-      }
-    } catch (e) {
-      if (e.toString().contains('Connection refused') ||
-          e.toString().contains('Failed host lookup')) {
-        print(
-          '⚠️  Local backend not available, falling back to Firebase Functions',
-        );
-        return await _generateWorkoutFirebase(workoutRequest);
-      }
       rethrow;
     }
   }
@@ -116,8 +38,6 @@ class AIWorkoutService {
     Map<String, dynamic> workoutRequest,
   ) async {
     try {
-      print('🔥 Using Firebase Functions with enhanced MCP');
-
       // Try enhanced AI workout endpoint first
       try {
         // Add cache-busting query parameter
@@ -129,10 +49,6 @@ class AIWorkoutService {
                 'cache_bust': DateTime.now().millisecondsSinceEpoch.toString(),
               },
             );
-
-        print(
-          '🔍 MCP Request - sending enhanced context with ${workoutRequest['workoutSessions']?.length ?? 0} recent sessions',
-        );
 
         final response = await http.post(
           uri,
@@ -157,7 +73,6 @@ class AIWorkoutService {
 
           if (responseData['success'] == true &&
               responseData['workout'] != null) {
-            print('✅ Firebase MCP enhanced workout generated successfully');
             return _parseAIWorkoutResponse(
               responseData['workout'],
               workoutRequest,
@@ -165,9 +80,7 @@ class AIWorkoutService {
           }
         }
       } catch (enhancedError) {
-        print(
-          '⚠️ Enhanced endpoint failed, falling back to basic: $enhancedError',
-        );
+        print('Enhanced endpoint failed, falling back to basic');
       }
 
       // Fallback to original Firebase Functions
@@ -175,14 +88,11 @@ class AIWorkoutService {
       final result = await callable.call(workoutRequest);
 
       if (result.data != null) {
-        print('DEBUG: Firebase AI workout generation successful (fallback)');
-
         // Parse the AI response into a Workout object
         final workoutData = result.data as Map<String, dynamic>;
         return _parseAIWorkoutResponse(workoutData, workoutRequest);
       }
 
-      print('DEBUG: Firebase AI workout generation returned null');
       return null;
     } catch (e) {
       final errorMessage = e.toString();
@@ -205,20 +115,12 @@ class AIWorkoutService {
         );
       }
 
-      // If it's any other error, try to provide a helpful fallback
+      // If it's any other error, provide helpful error message
       if (errorMessage.contains('Gemini API error') ||
           errorMessage.contains('generateWorkoutWithAI')) {
-        print(
-          '⚠️ AI service temporarily unavailable, trying local fallback...',
+        throw Exception(
+          'AI workout generation is temporarily unavailable. Please try again later.',
         );
-        try {
-          return await _generateWorkoutLocal(workoutRequest);
-        } catch (localError) {
-          print('Local fallback also failed: $localError');
-          throw Exception(
-            'AI workout generation is temporarily unavailable. Please try again later.',
-          );
-        }
       }
 
       rethrow;
@@ -231,15 +133,10 @@ class AIWorkoutService {
     Map<String, dynamic>? originalRequest,
   ]) {
     try {
-      print('🔄 Parsing AI workout response...');
-
       // Handle new nested workout_plan structure
       List<dynamic> exercisesData = [];
 
       if (data.containsKey('workout_plan') && data['workout_plan'] != null) {
-        print(
-          '📋 Found new workout_plan structure, extracting exercises from sections...',
-        );
         final workoutPlan = data['workout_plan'] as Map<String, dynamic>;
         final sections = workoutPlan['sections'] as List<dynamic>? ?? [];
 
@@ -249,10 +146,6 @@ class AIWorkoutService {
           final sectionType = sectionMap['type']?.toString() ?? '';
           var sectionExercises =
               sectionMap['exercises'] as List<dynamic>? ?? [];
-
-          print(
-            '📋 Processing section: $sectionType with ${sectionExercises.length} exercises',
-          );
 
           // Normalize string entries into maps and attach section metadata
           sectionExercises = sectionExercises.map((exercise) {
@@ -277,10 +170,6 @@ class AIWorkoutService {
 
           exercisesData.addAll(sectionExercises);
         }
-
-        print(
-          '📋 Total exercises extracted from sections: ${exercisesData.length}',
-        );
       } else {
         // Fallback to old flat structure
         var flat = data['exercises'] as List<dynamic>?;
@@ -295,9 +184,6 @@ class AIWorkoutService {
         }
 
         exercisesData = flat ?? [];
-        print(
-          '📋 Using flat exercises structure: ${exercisesData.length} exercises',
-        );
       }
 
       // Normalize exercisesData: convert string entries to maps and ensure a 'name' key exists
@@ -330,8 +216,6 @@ class AIWorkoutService {
       final exercises = exercisesData.map((exerciseData) {
         try {
           final exerciseMap = exerciseData as Map<String, dynamic>;
-          print('🏋️ Parsing exercise: ${exerciseMap['name']}');
-          print('🔍 Raw exercise data: $exerciseMap');
 
           // Handle section type for categorization
           final sectionType =
@@ -513,50 +397,14 @@ class AIWorkoutService {
         createdAt: DateTime.now(),
       );
     } catch (e) {
-      print('❌ Error parsing AI workout response: $e');
-      print('Raw response data: $data');
+      print('Error parsing AI workout response: $e');
       rethrow;
     }
   }
 
   /// Test backend connection and get service status
   Future<Map<String, dynamic>> getServiceStatus() async {
-    if (_isUsingLocalBackend) {
-      return await _getLocalBackendStatus();
-    } else {
-      return await _getFirebaseStatus();
-    }
-  }
-
-  /// Get local backend status and capabilities
-  Future<Map<String, dynamic>> _getLocalBackendStatus() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$_apiBaseUrl/workout/test'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return {
-          'backend': 'local',
-          'status': 'connected',
-          'url': _apiBaseUrl,
-          'services': data['services'] ?? {},
-          'mcpEnabled': data['services']?['mcp'] == 'connected',
-        };
-      } else {
-        throw Exception('Local backend returned ${response.statusCode}');
-      }
-    } catch (e) {
-      return {
-        'backend': 'local',
-        'status': 'disconnected',
-        'url': _apiBaseUrl,
-        'error': e.toString(),
-        'mcpEnabled': false,
-      };
-    }
+    return await _getFirebaseStatus();
   }
 
   /// Get Firebase Functions status
@@ -584,70 +432,33 @@ class AIWorkoutService {
     Map<String, dynamic>? preferences,
   }) async {
     try {
-      print('🧠 Generating smart workout for user: $userId');
-
       // Flatten the request structure for better token efficiency
       final flattenedRequest = _flattenSmartWorkoutRequest(userId, preferences);
-      print('🧠 Flattened smart workout request: $flattenedRequest');
 
-      if (_isUsingLocalBackend) {
-        final response = await http.post(
-          Uri.parse('$_apiBaseUrl/workout/smart-generate'),
-          headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': 'WorkoutApp/1.0',
-          },
-          body: jsonEncode(flattenedRequest),
-        );
+      // Use Firebase enhanced endpoint
+      final uri = Uri.parse(
+        '$_apiBaseUrl/enhancedAIWorkout/api/ai-workout/smart-generate',
+      );
 
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
+      final response = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'WorkoutApp/1.0',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(flattenedRequest),
+      );
 
-          if (responseData['success'] == true && responseData['data'] != null) {
-            print('✅ Smart workout generated (local MCP)');
-            return _parseAIWorkoutResponse(
-              responseData['data'],
-              flattenedRequest,
-            );
-          }
-        }
-      } else {
-        // Use Firebase enhanced endpoint
-        final uri = Uri.parse(
-          '$_apiBaseUrl/enhancedAIWorkout/api/ai-workout/smart-generate',
-        );
-        print('🔥 Calling Firebase smart-generate at: $uri');
-        print('🔥 Request payload: ${jsonEncode(flattenedRequest)}');
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
 
-        final response = await http.post(
-          uri,
-          headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': 'WorkoutApp/1.0',
-            'Accept': 'application/json',
-          },
-          body: jsonEncode(flattenedRequest),
-        );
-
-        print('📡 Smart workout response status: ${response.statusCode}');
-        print('📡 Smart workout response body: ${response.body}');
-
-        if (response.statusCode == 200) {
-          final responseData = jsonDecode(response.body);
-
-          if (responseData['success'] == true &&
-              responseData['workout'] != null) {
-            print('✅ Smart workout generated (Firebase MCP)');
-            return _parseAIWorkoutResponse(
-              responseData['workout'],
-              flattenedRequest,
-            );
-          } else {
-            print('❌ Smart workout response missing success or workout data');
-          }
-        } else {
-          print('❌ Smart workout failed with status: ${response.statusCode}');
-          print('❌ Error response: ${response.body}');
+        if (responseData['success'] == true &&
+            responseData['workout'] != null) {
+          return _parseAIWorkoutResponse(
+            responseData['workout'],
+            flattenedRequest,
+          );
         }
       }
 
@@ -660,11 +471,7 @@ class AIWorkoutService {
 
   /// Get development information
   String getBackendInfo() {
-    if (_isUsingLocalBackend) {
-      return 'Using LOCAL BACKEND at $_localBaseUrl (MCP Enhanced)';
-    } else {
-      return 'Using FIREBASE FUNCTIONS (Production)';
-    }
+    return 'Using FIREBASE FUNCTIONS (Production)';
   }
 
   /// Helper method to parse string lists from various formats

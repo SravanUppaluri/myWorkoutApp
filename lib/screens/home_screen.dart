@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     heroTag: 'ai_workout',
-                    backgroundColor: AppColors.primary.withOpacity(0.9),
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.9),
                     foregroundColor: AppColors.onPrimary,
                     icon: const Icon(Icons.auto_awesome),
                     label: const Text('AI Workout'),
@@ -66,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   FloatingActionButton.extended(
                     onPressed: () async {
                       setState(() => _isFabExpanded = false);
-                      print('DEBUG: Home screen - New Workout button pressed');
                       final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -75,10 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
 
                       if (result != null && result is Workout) {
-                        print(
-                          'DEBUG: Home screen - Workout returned: ${result.name}',
-                        );
-
                         // Get the necessary providers
                         final workoutProvider = Provider.of<WorkoutProvider>(
                           context,
@@ -91,17 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         if (authProvider.user != null) {
                           final userId = authProvider.user!.id;
-                          print(
-                            'DEBUG: Home screen - Saving workout for user: $userId',
-                          );
 
                           try {
                             final savedId = await workoutProvider.saveWorkout(
                               result,
                               userId,
-                            );
-                            print(
-                              'DEBUG: Home screen - Workout saved with ID: $savedId',
                             );
 
                             if (savedId != null) {
@@ -130,9 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               }
                             }
                           } catch (error) {
-                            print(
-                              'DEBUG: Home screen - Error saving workout: $error',
-                            );
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -144,7 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             }
                           }
                         } else {
-                          print('DEBUG: Home screen - No authenticated user');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -156,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         }
                       } else {
-                        print('DEBUG: Home screen - No workout returned');
+                        // No workout returned
                       }
                     },
                     heroTag: 'manual_workout',
@@ -190,8 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: isDarkMode ? AppColors.darkSurface : AppColors.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: isDarkMode
-            ? AppColors.darkOnSurface.withOpacity(0.6)
-            : AppColors.onSurface.withOpacity(0.6),
+            ? AppColors.darkOnSurface.withValues(alpha: 0.6)
+            : AppColors.onSurface.withValues(alpha: 0.6),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -268,10 +253,6 @@ class _DashboardTabState extends State<DashboardTab> {
       _recentWorkoutsCount = recentWorkouts.length;
       _isSmartGenerationAvailable = recentWorkouts.length >= 4;
     });
-
-    print('DEBUG: Found ${recentWorkouts.length} workouts in past 7 days');
-    print('DEBUG: Smart generation available: $_isSmartGenerationAvailable');
-    print('DEBUG: Recent workouts count: $_recentWorkoutsCount');
   }
 
   @override
@@ -1693,13 +1674,8 @@ class _DashboardTabState extends State<DashboardTab> {
   }
 
   Future<void> _generateTodaysWorkout(BuildContext context) async {
-    print('DEBUG: _generateTodaysWorkout called');
-    print('DEBUG: _isSmartGenerationAvailable = $_isSmartGenerationAvailable');
-    print('DEBUG: _recentWorkoutsCount = $_recentWorkoutsCount');
-
     // Safety check - this shouldn't be called if smart generation is not available
     if (!_isSmartGenerationAvailable) {
-      print('DEBUG: Smart generation not available, showing snackbar');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -1747,8 +1723,6 @@ class _DashboardTabState extends State<DashboardTab> {
           .take(4)
           .toList();
 
-      print('DEBUG: Found ${recentSessions.length} recent workout sessions');
-
       // Extract recent exercise names from recent sessions (prefer session data)
       // Use a set to deduplicate across multiple sessions
       final recentExerciseNamesSet = <String>{};
@@ -1759,14 +1733,11 @@ class _DashboardTabState extends State<DashboardTab> {
             if (name.isNotEmpty) recentExerciseNamesSet.add(name);
           }
         } catch (e) {
-          print(
-            'DEBUG: Failed to extract exercises from session ${session.id}: $e',
-          );
+          // Failed to extract exercises from session, skip
         }
       }
 
       final recentExerciseNames = recentExerciseNamesSet.toList();
-      print('DEBUG: Recent exercise names: $recentExerciseNames');
 
       // Create flattened smart workout parameters for better token efficiency
       final flattenedParams = <String, dynamic>{
@@ -1774,8 +1745,6 @@ class _DashboardTabState extends State<DashboardTab> {
         'recentExerciseNames': recentExerciseNames,
         'excludeWarmup': false, // Could make this configurable later
       };
-
-      print('DEBUG: Flattened smart workout parameters: $flattenedParams');
 
       // Generate the workout using AI with enhanced MCP context
       final aiWorkoutService = AIWorkoutService();
