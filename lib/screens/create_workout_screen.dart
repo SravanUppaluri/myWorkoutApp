@@ -74,14 +74,14 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   }
 
   void _saveWorkout() async {
-    print('DEBUG: _saveWorkout called');
+    logger.e('DEBUG: _saveWorkout called');
     if (!_formKey.currentState!.validate()) {
-      print('DEBUG: Form validation failed');
+      logger.e('DEBUG: Form validation failed');
       return;
     }
 
     if (_selectedExercises.isEmpty) {
-      print('DEBUG: No exercises selected');
+      logger.e('DEBUG: No exercises selected');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please add at least one exercise to your workout'),
@@ -91,7 +91,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
       return;
     }
 
-    print(
+    logger.e(
       'DEBUG: Creating workout with ${_selectedExercises.length} exercises',
     );
     final workout = Workout(
@@ -104,7 +104,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
       createdAt: widget.existingWorkout?.createdAt ?? DateTime.now(),
     );
 
-    print('DEBUG: Returning workout: ${workout.name}');
+    logger.e('DEBUG: Returning workout: ${workout.name}');
     // For now, just return the workout to be handled by the calling screen
     // This maintains compatibility with the current flow
     Navigator.pop(context, workout);

@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   'Sign in to continue your fitness journey',
                   style: AppTextStyles.bodyText1.copyWith(
                     color: isDarkMode
-                        ? AppColors.darkOnBackground.withOpacity(0.7)
+                        ? AppColors.darkOnBackground.withValues(alpha: 0.7)
                         : AppColors.darkGray,
                   ),
                   textAlign: TextAlign.center,
@@ -115,15 +115,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.all(AppDimensions.paddingMedium),
                   decoration: BoxDecoration(
                     color: isDarkMode
-                        ? AppColors.darkPrimary.withOpacity(0.1)
-                        : AppColors.primary.withOpacity(0.1),
+                        ? AppColors.darkPrimary.withValues(alpha: 0.1)
+                        : AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(
                       AppDimensions.radiusMedium,
                     ),
                     border: Border.all(
                       color: isDarkMode
-                          ? AppColors.darkPrimary.withOpacity(0.3)
-                          : AppColors.primary.withOpacity(0.3),
+                          ? AppColors.darkPrimary.withValues(alpha: 0.3)
+                          : AppColors.primary.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
@@ -155,7 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Email: antinationalfornonindians@gmail.com\nPassword: 123456',
                         style: AppTextStyles.caption.copyWith(
                           color: isDarkMode
-                              ? AppColors.darkOnBackground.withOpacity(0.7)
+                              ? AppColors.darkOnBackground.withValues(
+                                  alpha: 0.7,
+                                )
                               : AppColors.darkGray,
                         ),
                         textAlign: TextAlign.center,
@@ -196,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: 'Email',
                     labelStyle: TextStyle(
                       color: isDarkMode
-                          ? AppColors.darkOnBackground.withOpacity(0.7)
+                          ? AppColors.darkOnBackground.withValues(alpha: 0.7)
                           : AppColors.darkGray,
                     ),
                     prefixIcon: Icon(
@@ -211,8 +213,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       borderSide: BorderSide(
                         color: isDarkMode
-                            ? AppColors.darkOnBackground.withOpacity(0.3)
-                            : AppColors.darkGray.withOpacity(0.3),
+                            ? AppColors.darkOnBackground.withValues(alpha: 0.3)
+                            : AppColors.darkGray.withValues(alpha: 0.3),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -278,7 +280,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: 'Password',
                     labelStyle: TextStyle(
                       color: isDarkMode
-                          ? AppColors.darkOnBackground.withOpacity(0.7)
+                          ? AppColors.darkOnBackground.withValues(alpha: 0.7)
                           : AppColors.darkGray,
                     ),
                     prefixIcon: Icon(
@@ -293,7 +295,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? Icons.visibility
                             : Icons.visibility_off,
                         color: isDarkMode
-                            ? AppColors.darkOnBackground.withOpacity(0.7)
+                            ? AppColors.darkOnBackground.withValues(alpha: 0.7)
                             : AppColors.darkGray,
                       ),
                       onPressed: () {
@@ -308,8 +310,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       borderSide: BorderSide(
                         color: isDarkMode
-                            ? AppColors.darkOnBackground.withOpacity(0.3)
-                            : AppColors.darkGray.withOpacity(0.3),
+                            ? AppColors.darkOnBackground.withValues(alpha: 0.3)
+                            : AppColors.darkGray.withValues(alpha: 0.3),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(

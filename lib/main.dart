@@ -9,9 +9,12 @@ import 'utils/theme_manager.dart';
 import 'providers/auth_provider.dart';
 import 'providers/workout_provider.dart';
 import 'services/database_service.dart';
+import 'package:logger/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final logger = Logger();
 
   // Initialize Firebase with platform-specific options
   try {
@@ -22,7 +25,7 @@ void main() async {
     // Initialize sample data for testing
     await DatabaseService.initializeSampleData();
   } catch (e) {
-    print('Firebase initialization error: $e');
+    logger.e('Firebase initialization error: $e');
     // For now, continue without Firebase to test the app structure
   }
 

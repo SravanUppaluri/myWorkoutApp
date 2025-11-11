@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/workout.dart';
 import '../models/workout_session.dart';
 import '../services/database_service.dart';
+import 'package:logger/logger.dart';
 
 class WorkoutProvider extends ChangeNotifier {
   List<Workout> _workouts = [];
@@ -13,6 +14,8 @@ class WorkoutProvider extends ChangeNotifier {
   List<WorkoutSession> get workoutSessions => _workoutSessions;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+
+  final logger = Logger();
 
   /// Load user's workout sessions from Firestore
   Future<void> loadUserWorkoutSessions(String userId) async {
@@ -29,7 +32,7 @@ class WorkoutProvider extends ChangeNotifier {
                       doc.data() as Map<String, dynamic>,
                     );
                   } catch (e) {
-                    print('Error converting workout session data: $e');
+                    logger.e('Error converting workout session data: $e');
                     return null;
                   }
                 })
@@ -41,18 +44,20 @@ class WorkoutProvider extends ChangeNotifier {
               (a, b) => b.completedAt.compareTo(a.completedAt),
             );
 
-            print('DEBUG: Loaded ${_workoutSessions.length} workout sessions');
+            logger.e(
+              'DEBUG: Loaded ${_workoutSessions.length} workout sessions',
+            );
             notifyListeners();
           } catch (e) {
-            print('Error processing workout sessions: $e');
+            logger.e('Error processing workout sessions: $e');
           }
         },
         onError: (error) {
-          print('Workout sessions stream error: $error');
+          logger.e('Workout sessions stream error: $error');
         },
       );
     } catch (e) {
-      print('Failed to load workout sessions: $e');
+      logger.e('Failed to load workout sessions: $e');
     }
   }
 
@@ -97,22 +102,22 @@ class WorkoutProvider extends ChangeNotifier {
 
   /// Debug method to print all workout sessions
   void debugPrintWorkoutSessions() {
-    print('=== DEBUG: All Workout Sessions ===');
+    logger.e('=== DEBUG: All Workout Sessions ===');
     for (int i = 0; i < _workoutSessions.length; i++) {
       final session = _workoutSessions[i];
       final sessionDate = session.completedAt;
-      print('Session ${i + 1}:');
-      print('  ID: ${session.id}');
-      print('  UTC Time: ${sessionDate.toUtc()}');
-      print('  Local Time: ${sessionDate.toLocal()}');
-      print(
+      logger.e('Session ${i + 1}:');
+      logger.e('  ID: ${session.id}');
+      logger.e('  UTC Time: ${sessionDate.toUtc()}');
+      logger.e('  Local Time: ${sessionDate.toLocal()}');
+      logger.e(
         '  Date Only: ${sessionDate.toLocal().year}-${sessionDate.toLocal().month}-${sessionDate.toLocal().day}',
       );
-      print('  Duration: ${session.formattedDuration}');
-      print('  Exercises: ${session.completedExercises.length}');
-      print('---');
+      logger.e('  Duration: ${session.formattedDuration}');
+      logger.e('  Exercises: ${session.completedExercises.length}');
+      logger.e('---');
     }
-    print('=== END DEBUG ===');
+    logger.e('=== END DEBUG ===');
   }
 
   Future<void> loadUserWorkouts(String userId) async {
@@ -129,8 +134,8 @@ class WorkoutProvider extends ChangeNotifier {
                   try {
                     return Workout.fromJson(workoutMap);
                   } catch (e) {
-                    print('Error converting workout data: $e');
-                    print('Workout data that failed: $workoutMap');
+                    logger.e('Error converting workout data: $e');
+                    logger.e('Workout data that failed: $workoutMap');
                     return null;
                   }
                 })
@@ -139,14 +144,14 @@ class WorkoutProvider extends ChangeNotifier {
             _setLoading(false);
             _errorMessage = null;
           } catch (e) {
-            print('Error processing workout list: $e');
+            logger.e('Error processing workout list: $e');
             _errorMessage = 'Error loading workouts: $e';
             _setLoading(false);
           }
           notifyListeners();
         },
         onError: (error) {
-          print('Firestore stream error: $error');
+          logger.e('Firestore stream error: $error');
           _errorMessage =
               'Failed to load workouts. Please check your connection.';
           _setLoading(false);
@@ -163,24 +168,24 @@ class WorkoutProvider extends ChangeNotifier {
   /// Save a new workout
   Future<String?> saveWorkout(Workout workout, String userId) async {
     try {
-      print('DEBUG: WorkoutProvider.saveWorkout called for user: $userId');
-      print('DEBUG: Workout name: ${workout.name}');
-      print('DEBUG: Workout exercises: ${workout.exercises.length}');
+      logger.e('DEBUG: WorkoutProvider.saveWorkout called for user: $userId');
+      logger.e('DEBUG: Workout name: ${workout.name}');
+      logger.e('DEBUG: Workout exercises: ${workout.exercises.length}');
 
       _setLoading(true);
 
       // Convert Workout object to Map for the database
       final workoutMap = workout.toJson();
-      print('DEBUG: Workout converted to JSON: $workoutMap');
+      logger.e('DEBUG: Workout converted to JSON: $workoutMap');
 
       final workoutId = await DatabaseService.saveWorkout(workoutMap, userId);
-      print('DEBUG: DatabaseService.saveWorkout returned: $workoutId');
+      logger.e('DEBUG: DatabaseService.saveWorkout returned: $workoutId');
 
       // The stream will automatically update the list
       _setLoading(false);
       return workoutId;
     } catch (e) {
-      print('DEBUG: Error in WorkoutProvider.saveWorkout: $e');
+      logger.e('DEBUG: Error in WorkoutProvider.saveWorkout: $e');
       _errorMessage = e.toString();
       _setLoading(false);
       notifyListeners();
@@ -190,29 +195,29 @@ class WorkoutProvider extends ChangeNotifier {
 
   Future<bool> updateWorkout(Workout workout) async {
     try {
-      print(
+      logger.e(
         'DEBUG: WorkoutProvider.updateWorkout called for workout: ${workout.id}',
       );
-      print('DEBUG: Workout name: ${workout.name}');
-      print('DEBUG: Workout exercises: ${workout.exercises.length}');
+      logger.e('DEBUG: Workout name: ${workout.name}');
+      logger.e('DEBUG: Workout exercises: ${workout.exercises.length}');
 
       _setLoading(true);
 
       // Convert Workout object to Map for the database
       final workoutMap = workout.toJson();
-      print('DEBUG: Workout converted to JSON: $workoutMap');
+      logger.e('DEBUG: Workout converted to JSON: $workoutMap');
 
       await DatabaseService.updateWorkout(
         workoutId: workout.id,
         updates: workoutMap,
       );
-      print('DEBUG: DatabaseService.updateWorkout completed successfully');
+      logger.e('DEBUG: DatabaseService.updateWorkout completed successfully');
 
       // The stream will automatically update the list
       _setLoading(false);
       return true;
     } catch (e) {
-      print('DEBUG: Error in WorkoutProvider.updateWorkout: $e');
+      logger.e('DEBUG: Error in WorkoutProvider.updateWorkout: $e');
       _errorMessage = e.toString();
       _setLoading(false);
       notifyListeners();
@@ -223,11 +228,13 @@ class WorkoutProvider extends ChangeNotifier {
   /// Delete a workout
   Future<bool> deleteWorkout(String workoutId) async {
     try {
-      print('DEBUG: WorkoutProvider.deleteWorkout called for ID: $workoutId');
+      logger.e(
+        'DEBUG: WorkoutProvider.deleteWorkout called for ID: $workoutId',
+      );
       _setLoading(true);
 
       await DatabaseService.deleteWorkout(workoutId);
-      print(
+      logger.e(
         'DEBUG: WorkoutProvider.deleteWorkout succeeded for ID: $workoutId',
       );
 
@@ -236,7 +243,7 @@ class WorkoutProvider extends ChangeNotifier {
       _errorMessage = null;
       return true;
     } catch (e) {
-      print('DEBUG: WorkoutProvider.deleteWorkout failed: $e');
+      logger.e('DEBUG: WorkoutProvider.deleteWorkout failed: $e');
       _errorMessage = e.toString();
       _setLoading(false);
       notifyListeners();
@@ -247,13 +254,13 @@ class WorkoutProvider extends ChangeNotifier {
   /// Delete a workout session (completed workout)
   Future<bool> deleteWorkoutSession(String sessionId) async {
     try {
-      print(
+      logger.e(
         'DEBUG: WorkoutProvider.deleteWorkoutSession called for ID: $sessionId',
       );
       _setLoading(true);
 
       await DatabaseService.deleteWorkoutSession(sessionId);
-      print(
+      logger.e(
         'DEBUG: WorkoutProvider.deleteWorkoutSession succeeded for ID: $sessionId',
       );
 
@@ -264,7 +271,7 @@ class WorkoutProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('DEBUG: WorkoutProvider.deleteWorkoutSession failed: $e');
+      logger.e('DEBUG: WorkoutProvider.deleteWorkoutSession failed: $e');
       _errorMessage = e.toString();
       _setLoading(false);
       notifyListeners();

@@ -44,7 +44,7 @@ class TemplateCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getCategoryColor().withOpacity(0.1),
+                      color: _getCategoryColor().withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -104,7 +104,7 @@ class TemplateCard extends StatelessWidget {
                 template.description,
                 style: AppTextStyles.bodyText2.copyWith(
                   color: isDarkMode
-                      ? AppColors.darkOnSurface.withOpacity(0.8)
+                      ? AppColors.darkOnSurface.withValues(alpha: 0.8)
                       : AppColors.darkGray,
                 ),
               ),
@@ -147,10 +147,10 @@ class TemplateCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: AppColors.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Text(
@@ -173,7 +173,7 @@ class TemplateCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isDarkMode
                         ? AppColors.darkSurface
-                        : AppColors.lightGray.withOpacity(0.5),
+                        : AppColors.lightGray.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
@@ -213,7 +213,7 @@ class TemplateCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.1),
+                    color: Colors.amber.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.amber),
                   ),
@@ -248,7 +248,7 @@ class TemplateCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -339,7 +339,7 @@ class TemplateGridCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getCategoryColor().withOpacity(0.1),
+                      color: _getCategoryColor().withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -388,7 +388,7 @@ class TemplateGridCard extends StatelessWidget {
                   template.targetMuscles.take(2).join(', '),
                   style: AppTextStyles.caption.copyWith(
                     color: isDarkMode
-                        ? AppColors.darkOnSurface.withOpacity(0.7)
+                        ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                         : AppColors.darkGray,
                   ),
                   maxLines: 1,
@@ -482,7 +482,7 @@ class TemplateCategoryHeader extends StatelessWidget {
                     subtitle!,
                     style: AppTextStyles.caption.copyWith(
                       color: isDarkMode
-                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.7)
                           : AppColors.darkGray,
                     ),
                   ),

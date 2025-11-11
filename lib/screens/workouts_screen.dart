@@ -9,6 +9,9 @@ import 'workout_detail_screen.dart';
 import 'exercise_selection_screen.dart';
 import 'improved_ai_workout_screen.dart';
 import 'workout_session_screen.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class WorkoutsScreen extends StatefulWidget {
   const WorkoutsScreen({super.key});
@@ -1373,15 +1376,15 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
   }
 
   void _handleWorkoutAction(String action, Workout workout) {
-    print(
+    logger.e(
       '🎯 WORKOUTS SCREEN: User selected action "$action" for workout "${workout.name}"',
     );
-    print('📊 Workout ID: ${workout.id}');
-    print('📊 Action Time: ${DateTime.now()}');
+    logger.e('📊 Workout ID: ${workout.id}');
+    logger.e('📊 Action Time: ${DateTime.now()}');
 
     switch (action) {
       case 'start':
-        print('🚀 NAVIGATING TO: WorkoutDetailScreen');
+        logger.e('🚀 NAVIGATING TO: WorkoutDetailScreen');
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -1389,12 +1392,12 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
           ),
         ).then((result) {
           if (result == true && mounted) {
-            print('✅ RETURNED FROM DETAIL: Workout was deleted');
+            logger.e('✅ RETURNED FROM DETAIL: Workout was deleted');
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Deleted "${workout.name}"')),
             );
           } else {
-            print('↩️ RETURNED FROM DETAIL: No deletion');
+            logger.e('↩️ RETURNED FROM DETAIL: No deletion');
           }
         });
         break;
@@ -1422,17 +1425,17 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
   }
 
   Future<void> _showCreateWorkoutDialog() async {
-    print('DEBUG: Opening CreateWorkoutScreen');
+    logger.e('DEBUG: Opening CreateWorkoutScreen');
 
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CreateWorkoutScreen()),
     );
 
-    print('DEBUG: CreateWorkoutScreen returned: $result');
+    logger.e('DEBUG: CreateWorkoutScreen returned: $result');
 
     if (result != null && result is Workout) {
-      print(
+      logger.e(
         'DEBUG: Saving workout: ${result.name} with ${result.exercises.length} exercises',
       );
 
@@ -1441,14 +1444,14 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
         listen: false,
       );
 
-      print('DEBUG: Current user ID: $_currentUserId');
+      logger.e('DEBUG: Current user ID: $_currentUserId');
 
       try {
         final savedId = await workoutProvider.saveWorkout(
           result,
           _currentUserId!,
         );
-        print('DEBUG: Workout saved with ID: $savedId');
+        logger.e('DEBUG: Workout saved with ID: $savedId');
 
         if (savedId != null && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -1468,7 +1471,7 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
           );
         }
       } catch (error) {
-        print('DEBUG: Error saving workout: $error');
+        logger.e('DEBUG: Error saving workout: $error');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -1480,15 +1483,17 @@ class _WorkoutsScreenState extends State<WorkoutsScreen>
         }
       }
     } else {
-      print('DEBUG: No workout returned from CreateWorkoutScreen');
+      logger.e('DEBUG: No workout returned from CreateWorkoutScreen');
     }
   }
 
   void _showWorkoutDetails(Workout workout) {
-    print('🎯 WORKOUTS SCREEN: Showing workout details for "${workout.name}"');
-    print('📊 Workout ID: ${workout.id}');
-    print('📊 Details Time: ${DateTime.now()}');
-    print('🚀 NAVIGATING TO: WorkoutDetailScreen (via _showWorkoutDetails)');
+    logger.e(
+      '🎯 WORKOUTS SCREEN: Showing workout details for "${workout.name}"',
+    );
+    logger.e('📊 Workout ID: ${workout.id}');
+    logger.e('📊 Details Time: ${DateTime.now()}');
+    logger.e('🚀 NAVIGATING TO: WorkoutDetailScreen (via _showWorkoutDetails)');
 
     Navigator.push(
       context,

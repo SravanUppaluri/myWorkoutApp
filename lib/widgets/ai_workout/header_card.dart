@@ -15,12 +15,12 @@ class AIWorkoutHeaderCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primary.withOpacity(0.8)],
+          colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
         ),
         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
+            color: AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -34,7 +34,7 @@ class AIWorkoutHeaderCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppDimensions.paddingSmall),
                 decoration: BoxDecoration(
-                  color: AppColors.onPrimary.withOpacity(0.2),
+                  color: AppColors.onPrimary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(
                     AppDimensions.radiusSmall,
                   ),
@@ -62,7 +62,7 @@ class AIWorkoutHeaderCard extends StatelessWidget {
                     Text(
                       'Generate personalized workouts instantly using your profile, preferences, and workout history.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.9),
+                        color: AppColors.onPrimary.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -96,10 +96,10 @@ class AIWorkoutHeaderCard extends StatelessWidget {
         vertical: 4,
       ),
       decoration: BoxDecoration(
-        color: AppColors.onPrimary.withOpacity(0.2),
+        color: AppColors.onPrimary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
         border: Border.all(
-          color: AppColors.onPrimary.withOpacity(0.3),
+          color: AppColors.onPrimary.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

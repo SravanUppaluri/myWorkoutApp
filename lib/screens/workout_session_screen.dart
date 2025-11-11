@@ -7,8 +7,11 @@ import '../models/workout.dart';
 import '../providers/auth_provider.dart';
 import '../providers/workout_provider.dart';
 import '../services/database_service.dart';
+import 'package:logger/logger.dart';
 
 enum WorkoutViewType { classic, enhanced }
+
+final logger = Logger();
 
 class WorkoutSessionScreen extends StatefulWidget {
   final Workout workout;
@@ -245,7 +248,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
         await workoutProvider.updateWorkout(updatedTemplate);
       }
     } catch (e) {
-      print('Error updating template progression: $e');
+      logger.e('Error updating template progression: $e');
     }
   }
 

@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user.dart' as app_user;
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -55,7 +58,7 @@ class AuthService {
       }
       return null;
     } catch (e) {
-      print('Error getting user data: $e');
+      logger.e('Error getting user data: $e');
       return null;
     }
   }
@@ -76,7 +79,7 @@ class AuthService {
         'lastLoginAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error creating user document: $e');
+      logger.e('Error creating user document: $e');
       rethrow;
     }
   }
@@ -163,7 +166,7 @@ class AuthService {
     try {
       await _firebaseAuth.signOut();
     } catch (e) {
-      print('Error signing out: $e');
+      logger.e('Error signing out: $e');
       throw 'Failed to sign out. Please try again.';
     }
   }
@@ -211,7 +214,7 @@ class AuthService {
         }
       }
     } catch (e) {
-      print('Error updating profile: $e');
+      logger.e('Error updating profile: $e');
       throw 'Failed to update profile. Please try again.';
     }
   }
@@ -232,7 +235,7 @@ class AuthService {
         'lastUpdatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      print('Error updating user data: $e');
+      logger.e('Error updating user data: $e');
       throw 'Failed to update user data. Please try again.';
     }
   }
@@ -265,11 +268,11 @@ class AuthService {
         if (updates.isNotEmpty) {
           updates['lastUpdatedAt'] = FieldValue.serverTimestamp();
           await userDoc.update(updates);
-          print('User data migrated successfully for user: $userId');
+          logger.e('User data migrated successfully for user: $userId');
         }
       }
     } catch (e) {
-      print('Error migrating user data: $e');
+      logger.e('Error migrating user data: $e');
       // Don't throw here as this is a background migration
     }
   }
@@ -286,7 +289,7 @@ class AuthService {
         await user.delete();
       }
     } catch (e) {
-      print('Error deleting account: $e');
+      logger.e('Error deleting account: $e');
       throw 'Failed to delete account. Please try again.';
     }
   }
@@ -299,7 +302,7 @@ class AuthService {
       );
       return methods.isNotEmpty;
     } catch (e) {
-      print('Error checking email: $e');
+      logger.e('Error checking email: $e');
       return false;
     }
   }

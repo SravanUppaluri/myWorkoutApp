@@ -10,6 +10,9 @@ import '../providers/auth_provider.dart';
 import '../services/ai_workout_service.dart';
 import '../services/workout_template_service.dart';
 import '../screens/workout_session_screen.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 /// Service class that handles all template-related UI and functionality
 /// Extracted from ImprovedAIWorkoutScreen to maintain separation of concerns
@@ -75,7 +78,7 @@ class TemplateUIService {
       _recommendedTemplates = recommendedTemplates;
       _isLoadingTemplates = false;
     } catch (e) {
-      print('Error loading templates: $e');
+      logger.e('Error loading templates: $e');
       _isLoadingTemplates = false;
     }
   }
@@ -87,7 +90,7 @@ class TemplateUIService {
       final useAI = prefs.getBool('use_ai_generation') ?? true; // Default to AI
       _useAIGeneration = useAI;
     } catch (e) {
-      print('Error loading AI preference: $e');
+      logger.e('Error loading AI preference: $e');
     }
   }
 
@@ -98,7 +101,7 @@ class TemplateUIService {
       await prefs.setBool('use_ai_generation', useAI);
       _useAIGeneration = useAI;
     } catch (e) {
-      print('Error saving AI preference: $e');
+      logger.e('Error saving AI preference: $e');
     }
   }
 
@@ -1202,8 +1205,8 @@ class TemplateUIService {
       // Define workout split patterns based on template name
       final workoutSplit = _getWorkoutSplitPattern(templateName);
 
-      print('🚀 Generating 7-day plan for: $templateName');
-      print('Split pattern: $workoutSplit');
+      logger.e('🚀 Generating 7-day plan for: $templateName');
+      logger.e('Split pattern: $workoutSplit');
 
       // Generate each day's workout
       for (int day = 0; day < 7; day++) {
@@ -1214,12 +1217,12 @@ class TemplateUIService {
           continue;
         }
 
-        print('Generating Day ${day + 1}: ${dayInfo['name']}');
+        logger.e('Generating Day ${day + 1}: ${dayInfo['name']}');
 
         // Create workout request for this day
         final workoutRequest = {
           'userId': currentUser.id,
-          'goal': 'Progressive ${templateName} training - Day ${day + 1}',
+          'goal': 'Progressive $templateName training - Day ${day + 1}',
           'fitnessLevel': fitnessLevel,
           'workoutType': dayInfo['type'],
           'duration': duration,
@@ -1227,7 +1230,7 @@ class TemplateUIService {
           'focusArea': dayInfo['focusArea'] ?? dayInfo['muscleGroups'].first,
           'equipment': ['Dumbbells', 'Barbell', 'Bodyweight'],
           'additionalNotes':
-              'Day ${day + 1} of 7-day ${templateName} plan. ${dayInfo['description']}',
+              'Day ${day + 1} of 7-day $templateName plan. ${dayInfo['description']}',
           'sessionId':
               '${templateName.toLowerCase()}_day${day + 1}_${DateTime.now().millisecondsSinceEpoch}',
           'dayNumber': day + 1,
@@ -1269,10 +1272,10 @@ class TemplateUIService {
         await Future.delayed(const Duration(milliseconds: 500));
       }
 
-      print('✅ Successfully generated ${workoutPlan.length} workouts');
+      logger.e('✅ Successfully generated ${workoutPlan.length} workouts');
       return workoutPlan;
     } catch (e) {
-      print('❌ Error generating 7-day plan: $e');
+      logger.e('❌ Error generating 7-day plan: $e');
       showErrorSnackBar('Failed to generate 7-day plan: $e');
       return null;
     }
@@ -1291,7 +1294,7 @@ class TemplateUIService {
         WorkoutExercise(
           exercise: Exercise(
             id: 'mock_${muscleGroup.toLowerCase()}_${exercises.length}',
-            name: 'Mock ${muscleGroup} Exercise',
+            name: 'Mock $muscleGroup Exercise',
             category: muscleGroup.toLowerCase(),
             equipment:
                 template.params['equipment'] as List<String>? ?? ['Bodyweight'],
@@ -1306,7 +1309,7 @@ class TemplateUIService {
             tempo: 'Moderate',
             muscleGroup: muscleGroup,
             muscleInfo: MuscleInfo(
-              scientificName: '${muscleGroup} muscle',
+              scientificName: '$muscleGroup muscle',
               commonName: muscleGroup,
               muscleRegions: [
                 MuscleRegion(
@@ -1547,7 +1550,7 @@ class TemplateUIService {
         WorkoutExercise(
           exercise: Exercise(
             id: 'mock_day${dayNumber}_${muscleGroup.toLowerCase()}_$i',
-            name: 'Mock ${muscleGroup} Exercise ${i + 1}',
+            name: 'Mock $muscleGroup Exercise ${i + 1}',
             category: muscleGroup.toLowerCase(),
             equipment: ['Dumbbells', 'Bodyweight'],
             targetRegion: [muscleGroup],
@@ -1561,7 +1564,7 @@ class TemplateUIService {
             tempo: 'Moderate',
             muscleGroup: muscleGroup,
             muscleInfo: MuscleInfo(
-              scientificName: '${muscleGroup} muscle',
+              scientificName: '$muscleGroup muscle',
               commonName: muscleGroup,
               muscleRegions: [
                 MuscleRegion(

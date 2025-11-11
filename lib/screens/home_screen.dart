@@ -14,6 +14,9 @@ import 'profile_screen.dart';
 import 'create_workout_screen.dart';
 import 'improved_ai_workout_screen.dart';
 import 'workout_review_screen.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -1763,9 +1766,9 @@ class _DashboardTabState extends State<DashboardTab> {
           userId: userId,
           preferences: flattenedParams,
         );
-        print('✅ Smart workout generation with MCP successful');
+        logger.e('✅ Smart workout generation with MCP successful');
       } catch (e) {
-        print(
+        logger.e(
           '⚠️ Smart workout failed, falling back to regular generation: $e',
         );
         // Add required goal parameter for fallback method
@@ -1833,7 +1836,7 @@ class _DashboardTabState extends State<DashboardTab> {
       }
     } catch (e) {
       Navigator.of(context).pop(); // Close loading dialog
-      print('Error generating today\'s workout: $e');
+      logger.e('Error generating today\'s workout: $e');
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

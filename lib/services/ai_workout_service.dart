@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/workout.dart';
 import '../models/exercise.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class AIWorkoutService {
   late final FirebaseFunctions _functions;
@@ -28,7 +31,7 @@ class AIWorkoutService {
 
       return await _generateWorkoutFirebase(flattenedRequest);
     } catch (e) {
-      print('Error generating workout with AI: $e');
+      logger.e('Error generating workout with AI: $e');
       rethrow;
     }
   }
@@ -80,7 +83,7 @@ class AIWorkoutService {
           }
         }
       } catch (enhancedError) {
-        print('Enhanced endpoint failed, falling back to basic');
+        logger.e('Enhanced endpoint failed, falling back to basic');
       }
 
       // Fallback to original Firebase Functions
@@ -96,20 +99,22 @@ class AIWorkoutService {
       return null;
     } catch (e) {
       final errorMessage = e.toString();
-      print('Error generating workout with Firebase Functions: $errorMessage');
+      logger.e(
+        'Error generating workout with Firebase Functions: $errorMessage',
+      );
 
       // Handle specific Gemini API errors
       if (errorMessage.contains('gemini-2.5-flash-latest is not found') ||
           errorMessage.contains('models/gemini-2.5-flash-latest')) {
-        print(
+        logger.e(
           '🚨 GEMINI MODEL ERROR: gemini-2.5-flash-latest is not available',
         );
-        print(
+        logger.e(
           '💡 Please update your Firebase Functions to use a supported model like:',
         );
-        print('   - gemini-2.5-flash');
-        print('   - gemini-1.5-pro');
-        print('   - gemini-pro');
+        logger.e('   - gemini-2.5-flash');
+        logger.e('   - gemini-1.5-pro');
+        logger.e('   - gemini-pro');
         throw Exception(
           'AI model unavailable. Please contact support to update the workout generation service.',
         );
@@ -315,7 +320,7 @@ class AIWorkoutService {
             restTime = _parseRestTime(exerciseMap['restTime']);
           }
 
-          print('✅ Created exercise: ${exercise.name} (${exercise.id})');
+          logger.e('✅ Created exercise: ${exercise.name} (${exercise.id})');
 
           return WorkoutExercise(
             exercise: exercise,
@@ -332,7 +337,7 @@ class AIWorkoutService {
           final exerciseName =
               (exerciseData as Map<String, dynamic>?)?['name']?.toString() ??
               'Unknown Exercise';
-          print('⚠️ Error parsing exercise $exerciseName: $exerciseError');
+          logger.e('⚠️ Error parsing exercise $exerciseName: $exerciseError');
 
           // Return a default exercise to prevent the entire workout from failing
           return WorkoutExercise(
@@ -371,7 +376,7 @@ class AIWorkoutService {
         }
       }).toList();
 
-      print('✅ Successfully parsed ${exercises.length} exercises');
+      logger.e('✅ Successfully parsed ${exercises.length} exercises');
 
       // Create Workout object with meaningful name
       final workoutName = _generateMeaningfulWorkoutName(
@@ -380,7 +385,7 @@ class AIWorkoutService {
         exercisesData,
       );
 
-      print('🎯 Created workout: $workoutName');
+      logger.e('🎯 Created workout: $workoutName');
 
       return Workout(
         id: '', // Will be set when saved to database
@@ -397,7 +402,7 @@ class AIWorkoutService {
         createdAt: DateTime.now(),
       );
     } catch (e) {
-      print('Error parsing AI workout response: $e');
+      logger.e('Error parsing AI workout response: $e');
       rethrow;
     }
   }
@@ -464,7 +469,7 @@ class AIWorkoutService {
 
       throw Exception('Failed to generate smart workout');
     } catch (e) {
-      print('Error generating smart workout: $e');
+      logger.e('Error generating smart workout: $e');
       rethrow;
     }
   }
@@ -507,7 +512,7 @@ class AIWorkoutService {
       }
       return [];
     } catch (e) {
-      print('Error generating workout variations: $e');
+      logger.e('Error generating workout variations: $e');
       rethrow;
     }
   }
@@ -526,7 +531,7 @@ class AIWorkoutService {
 
       return result.data as Map<String, dynamic>?;
     } catch (e) {
-      print('Error getting workout suggestions: $e');
+      logger.e('Error getting workout suggestions: $e');
       rethrow;
     }
   }
@@ -663,7 +668,7 @@ class AIWorkoutService {
     Map<String, dynamic>? originalRequest,
     List<dynamic> exercisesData,
   ) {
-    print('🎯 Generating meaningful workout name...');
+    logger.e('🎯 Generating meaningful workout name...');
 
     // First, try to extract a good name from the workout_plan if it exists
     if (data.containsKey('workout_plan')) {
@@ -674,7 +679,7 @@ class AIWorkoutService {
           planName.length <= 30 &&
           !planName.toLowerCase().contains('achieve') &&
           !planName.toLowerCase().contains('your goal')) {
-        print('✅ Using workout plan name: "$planName"');
+        logger.e('✅ Using workout plan name: "$planName"');
         return planName;
       }
     }
@@ -770,7 +775,7 @@ class AIWorkoutService {
       workoutName = 'Evening $workoutName';
     }
 
-    print('✅ Generated meaningful name: "$workoutName"');
+    logger.e('✅ Generated meaningful name: "$workoutName"');
     return workoutName;
   }
 

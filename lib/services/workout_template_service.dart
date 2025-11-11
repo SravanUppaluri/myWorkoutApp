@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/workout_template.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class WorkoutTemplateService {
   static const String _keyCustomTemplates = 'workout_custom_templates';
   static const String _keyFavoriteTemplates = 'workout_favorite_templates';
   static const String _keyTemplateUsage = 'workout_template_usage';
-
   // Quick Templates - Pre-defined templates for instant generation
   static List<WorkoutTemplate> getQuickTemplates() {
     final now = DateTime.now();
-
     return [
       WorkoutTemplate(
         id: 'quick_upper_30',
@@ -182,7 +183,7 @@ class WorkoutTemplateService {
       final jsonString = json.encode(existing.map((t) => t.toJson()).toList());
       await prefs.setString(_keyCustomTemplates, jsonString);
     } catch (e) {
-      print('Error saving custom template: $e');
+      logger.e('Error saving custom template: $e');
     }
   }
 
@@ -197,7 +198,7 @@ class WorkoutTemplateService {
         return decoded.map((item) => WorkoutTemplate.fromJson(item)).toList();
       }
     } catch (e) {
-      print('Error loading custom templates: $e');
+      logger.e('Error loading custom templates: $e');
     }
     return [];
   }
@@ -221,7 +222,7 @@ class WorkoutTemplateService {
         await prefs.setString(_keyFavoriteTemplates, jsonString);
       }
     } catch (e) {
-      print('Error adding to favorites: $e');
+      logger.e('Error adding to favorites: $e');
     }
   }
 
@@ -236,7 +237,7 @@ class WorkoutTemplateService {
       final jsonString = json.encode(existing.map((t) => t.toJson()).toList());
       await prefs.setString(_keyFavoriteTemplates, jsonString);
     } catch (e) {
-      print('Error removing from favorites: $e');
+      logger.e('Error removing from favorites: $e');
     }
   }
 
@@ -251,7 +252,7 @@ class WorkoutTemplateService {
         return decoded.map((item) => WorkoutTemplate.fromJson(item)).toList();
       }
     } catch (e) {
-      print('Error loading favorite templates: $e');
+      logger.e('Error loading favorite templates: $e');
     }
     return [];
   }
@@ -276,7 +277,7 @@ class WorkoutTemplateService {
 
       await prefs.setString(_keyTemplateUsage, json.encode(usage));
     } catch (e) {
-      print('Error tracking template usage: $e');
+      logger.e('Error tracking template usage: $e');
     }
   }
 
@@ -293,7 +294,7 @@ class WorkoutTemplateService {
         return usage[templateId] ?? {'count': 0, 'lastUsed': null, 'dates': []};
       }
     } catch (e) {
-      print('Error getting template usage: $e');
+      logger.e('Error getting template usage: $e');
     }
     return {'count': 0, 'lastUsed': null, 'dates': []};
   }

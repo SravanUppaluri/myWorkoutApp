@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class DatabaseService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -73,8 +76,8 @@ class DatabaseService {
     String userId,
   ) async {
     try {
-      print('DEBUG: DatabaseService.saveWorkout called for user: $userId');
-      print('DEBUG: Workout data: $workout');
+      logger.e('DEBUG: DatabaseService.saveWorkout called for user: $userId');
+      logger.e('DEBUG: Workout data: $workout');
 
       // Add userId and timestamp
       final workoutData = {
@@ -85,48 +88,50 @@ class DatabaseService {
 
       // Check if this is an update (existing document) or create (new document)
       final workoutId = workout['id'];
-      print('DEBUG: Workout ID: $workoutId');
+      logger.e('DEBUG: Workout ID: $workoutId');
 
       if (workoutId != null &&
           workoutId.toString().isNotEmpty &&
           workoutId.toString() != '') {
-        print('DEBUG: Updating existing workout');
+        logger.e('DEBUG: Updating existing workout');
         // Try to check if document exists before updating
         try {
           final docSnapshot = await workouts.doc(workoutId).get();
           if (docSnapshot.exists) {
             // Document exists, update it
             await workouts.doc(workoutId).update(workoutData);
-            print('DEBUG: Updated existing workout with ID: $workoutId');
+            logger.e('DEBUG: Updated existing workout with ID: $workoutId');
             return workoutId;
           } else {
             // Document doesn't exist, create new one
             workoutData['createdAt'] = FieldValue.serverTimestamp();
             workoutData.remove('id'); // Remove the old ID
             final docRef = await workouts.add(workoutData);
-            print('DEBUG: Created new workout with ID: ${docRef.id}');
+            logger.e('DEBUG: Created new workout with ID: ${docRef.id}');
             return docRef.id;
           }
         } catch (e) {
           // If there's an error checking existence, create new document
-          print('Error checking document existence, creating new: $e');
+          logger.e('Error checking document existence, creating new: $e');
           workoutData['createdAt'] = FieldValue.serverTimestamp();
           workoutData.remove('id'); // Remove the old ID
           final docRef = await workouts.add(workoutData);
-          print('DEBUG: Created new workout after error with ID: ${docRef.id}');
+          logger.e(
+            'DEBUG: Created new workout after error with ID: ${docRef.id}',
+          );
           return docRef.id;
         }
       } else {
-        print('DEBUG: Creating new workout');
+        logger.e('DEBUG: Creating new workout');
         // No ID provided, create new workout
         workoutData['createdAt'] = FieldValue.serverTimestamp();
         workoutData.remove('id'); // Remove any null/empty ID
         final docRef = await workouts.add(workoutData);
-        print('DEBUG: Created new workout with ID: ${docRef.id}');
+        logger.e('DEBUG: Created new workout with ID: ${docRef.id}');
         return docRef.id;
       }
     } catch (e) {
-      print('DEBUG: Error in DatabaseService.saveWorkout: $e');
+      logger.e('DEBUG: Error in DatabaseService.saveWorkout: $e');
       throw Exception('Failed to save workout: $e');
     }
   }
@@ -182,11 +187,11 @@ class DatabaseService {
   /// Delete workout
   static Future<void> deleteWorkout(String workoutId) async {
     try {
-      print('DEBUG: Attempting to delete workout with ID: $workoutId');
+      logger.e('DEBUG: Attempting to delete workout with ID: $workoutId');
       await workouts.doc(workoutId).delete();
-      print('DEBUG: Successfully deleted workout with ID: $workoutId');
+      logger.e('DEBUG: Successfully deleted workout with ID: $workoutId');
     } catch (e) {
-      print('DEBUG: Error deleting workout: $e');
+      logger.e('DEBUG: Error deleting workout: $e');
       throw Exception('Failed to delete workout: $e');
     }
   }
@@ -194,11 +199,15 @@ class DatabaseService {
   /// Delete workout session (completed workout)
   static Future<void> deleteWorkoutSession(String sessionId) async {
     try {
-      print('DEBUG: Attempting to delete workout session with ID: $sessionId');
+      logger.e(
+        'DEBUG: Attempting to delete workout session with ID: $sessionId',
+      );
       await workoutSessions.doc(sessionId).delete();
-      print('DEBUG: Successfully deleted workout session with ID: $sessionId');
+      logger.e(
+        'DEBUG: Successfully deleted workout session with ID: $sessionId',
+      );
     } catch (e) {
-      print('DEBUG: Error deleting workout session: $e');
+      logger.e('DEBUG: Error deleting workout session: $e');
       throw Exception('Failed to delete workout session: $e');
     }
   }
@@ -252,12 +261,12 @@ class DatabaseService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      print(
+      logger.e(
         'Saved AI exercise to database: ${exerciseData['name']} (ID: ${docRef.id})',
       );
       return docRef.id;
     } catch (e) {
-      print('Error saving AI exercise to database: $e');
+      logger.e('Error saving AI exercise to database: $e');
       rethrow;
     }
   }
@@ -406,10 +415,10 @@ class DatabaseService {
         'timestamp': FieldValue.serverTimestamp(),
         'message': 'Connection test successful from Flutter app',
       });
-      print('✅ Firebase Firestore connected successfully!');
+      logger.e('✅ Firebase Firestore connected successfully!');
       return true;
     } catch (e) {
-      print('❌ Firebase connection failed: $e');
+      logger.e('❌ Firebase connection failed: $e');
       return false;
     }
   }
@@ -421,7 +430,7 @@ class DatabaseService {
       final exercisesSnapshot = await exercises.limit(1).get();
 
       if (exercisesSnapshot.docs.isEmpty) {
-        print('📝 Adding sample exercises to database...');
+        logger.e('📝 Adding sample exercises to database...');
 
         // Add sample exercises
         final sampleExercises = [
@@ -495,12 +504,12 @@ class DatabaseService {
         }
         await batch.commit();
 
-        print('✅ Sample exercises added successfully!');
+        logger.e('✅ Sample exercises added successfully!');
       } else {
-        print('✅ Exercise library already has data');
+        logger.e('✅ Exercise library already has data');
       }
     } catch (e) {
-      print('❌ Failed to initialize sample data: $e');
+      logger.e('❌ Failed to initialize sample data: $e');
     }
   }
 }

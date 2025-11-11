@@ -21,9 +21,11 @@ class DatabaseMigrationHelper extends StatelessWidget {
           margin: const EdgeInsets.all(AppDimensions.marginMedium),
           padding: const EdgeInsets.all(AppDimensions.paddingMedium),
           decoration: BoxDecoration(
-            color: AppColors.secondary.withOpacity(0.1),
+            color: AppColors.secondary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.secondary.withOpacity(0.3)),
+            border: Border.all(
+              color: AppColors.secondary.withValues(alpha: 0.3),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

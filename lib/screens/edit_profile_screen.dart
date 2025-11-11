@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/constants.dart';
 import '../providers/auth_provider.dart';
+import 'package:logger/logger.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -9,6 +10,8 @@ class EditProfileScreen extends StatefulWidget {
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
+
+final logger = Logger();
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
@@ -533,7 +536,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
 
       // Debug: Print selected goals to verify they're being saved
-      print('Saving fitness goals: $_selectedGoals');
+      logger.e('Saving fitness goals: $_selectedGoals');
 
       // Update user profile
       await authProvider.updateUserProfile(updatedUser);

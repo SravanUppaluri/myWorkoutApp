@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../models/user.dart';
 import '../services/auth_service.dart';
+import 'package:logger/logger.dart';
 
 enum AuthStatus { initial, authenticated, unauthenticated, loading }
 
@@ -17,6 +18,8 @@ class AuthProvider extends ChangeNotifier {
   User? get user => _user;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _status == AuthStatus.authenticated;
+
+  final logger = Logger();
 
   AuthProvider() {
     _initializeAuth();
@@ -51,7 +54,7 @@ class AuthProvider extends ChangeNotifier {
             _setStatus(AuthStatus.authenticated);
           }
         } catch (e) {
-          print('Error getting user data: $e');
+          logger.e('Error getting user data: $e');
           _setStatus(AuthStatus.unauthenticated);
         }
       } else {
@@ -73,7 +76,7 @@ class AuthProvider extends ChangeNotifier {
         password,
       );
       if (user != null) {
-        print('Login successful, user: ${user.email}');
+        logger.e('Login successful, user: ${user.email}');
 
         // Migrate user data to include new fields if needed
         await _authService.migrateUserData(user.id);
@@ -86,10 +89,10 @@ class AuthProvider extends ChangeNotifier {
           _user = user; // Fallback to basic user data
         }
         _setStatus(AuthStatus.authenticated);
-        print('Auth status set to authenticated');
+        logger.e('Auth status set to authenticated');
       }
     } catch (e) {
-      print('Login error: $e');
+      logger.e('Login error: $e');
       _errorMessage = e.toString();
       _setStatus(AuthStatus.unauthenticated);
       rethrow;
@@ -112,7 +115,7 @@ class AuthProvider extends ChangeNotifier {
         displayName,
       );
       if (user != null) {
-        print('Registration successful, user: ${user.email}');
+        logger.e('Registration successful, user: ${user.email}');
         // Get complete user data from Firestore
         User? appUser = await _authService.getUserData(user.id);
         if (appUser != null) {
@@ -121,10 +124,10 @@ class AuthProvider extends ChangeNotifier {
           _user = user; // Fallback to basic user data
         }
         _setStatus(AuthStatus.authenticated);
-        print('Auth status set to authenticated after registration');
+        logger.e('Auth status set to authenticated after registration');
       }
     } catch (e) {
-      print('Registration error: $e');
+      logger.e('Registration error: $e');
       _errorMessage = e.toString();
       _setStatus(AuthStatus.unauthenticated);
       rethrow;
@@ -140,7 +143,7 @@ class AuthProvider extends ChangeNotifier {
       // The auth state listener will handle clearing the user and setting status
     } catch (e) {
       _errorMessage = e.toString();
-      print('Logout error: $e');
+      logger.e('Logout error: $e');
     }
   }
 

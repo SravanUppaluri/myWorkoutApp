@@ -5,6 +5,9 @@ import '../models/exercise.dart';
 import '../models/workout.dart';
 import '../services/database_service.dart';
 import '../services/exercise_ai_service.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class ExerciseSelectionScreen extends StatefulWidget {
   const ExerciseSelectionScreen({super.key});
@@ -111,7 +114,7 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
             updatedAt: DateTime.now(),
           );
         } catch (e) {
-          print('Error creating exercise ${doc.id}: $e');
+          logger.e('Error creating exercise ${doc.id}: $e');
           // Return a default exercise if there's an error
           return Exercise(
             id: doc.id,

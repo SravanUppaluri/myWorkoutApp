@@ -25,7 +25,7 @@ class WorkoutModeSelector extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -80,7 +80,7 @@ class WorkoutModeSelector extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: [
                       AppColors.primary,
-                      AppColors.primary.withOpacity(0.8),
+                      AppColors.primary.withValues(alpha: 0.8),
                     ],
                   )
                 : null,
@@ -89,7 +89,7 @@ class WorkoutModeSelector extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? AppColors.primary
-                  : theme.dividerColor.withOpacity(0.3),
+                  : theme.dividerColor.withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
           ),
@@ -117,8 +117,10 @@ class WorkoutModeSelector extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: isSelected
-                      ? AppColors.onPrimary.withOpacity(0.9)
-                      : theme.textTheme.bodySmall?.color?.withOpacity(0.7),
+                      ? AppColors.onPrimary.withValues(alpha: 0.9)
+                      : theme.textTheme.bodySmall?.color?.withValues(
+                          alpha: 0.7,
+                        ),
                   fontSize: 11,
                 ),
               ),

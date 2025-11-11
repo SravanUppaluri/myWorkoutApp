@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import '../services/ai_preferences_service.dart';
+import 'package:logger/logger.dart';
 
 /// Service responsible for managing user workout preferences
 /// Handles recent preferences, smart recommendations, and user settings
 class WorkoutPreferencesService extends ChangeNotifier {
+  final logger = Logger();
   // State
   List<Map<String, dynamic>> _recentPreferences = [];
   Map<String, dynamic> _smartRecommendations = {};
@@ -31,7 +33,7 @@ class WorkoutPreferencesService extends ChangeNotifier {
           await AIPreferencesService.getSmartRecommendations();
       _smartRecommendations = recommendations;
     } catch (e) {
-      debugPrint('Error loading user preferences: $e');
+      logger.e('Error loading user preferences: $e');
     } finally {
       _isLoadingPreferences = false;
       notifyListeners();
@@ -294,7 +296,7 @@ class WorkoutPreferencesService extends ChangeNotifier {
       await AIPreferencesService.saveLastGenerationParams(preference);
       await loadUserPreferences(); // Reload to get updated data
     } catch (e) {
-      debugPrint('Error saving preference: $e');
+      logger.e('Error saving preference: $e');
     }
   }
 
@@ -307,9 +309,9 @@ class WorkoutPreferencesService extends ChangeNotifier {
       notifyListeners();
 
       // Note: AIPreferencesService might need a clearAll method
-      debugPrint('Preferences cleared locally');
+      logger.e('Preferences cleared locally');
     } catch (e) {
-      debugPrint('Error clearing preferences: $e');
+      logger.e('Error clearing preferences: $e');
     }
   }
 

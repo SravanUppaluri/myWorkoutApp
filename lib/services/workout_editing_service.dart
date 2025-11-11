@@ -2,9 +2,11 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import '../models/workout.dart';
 import '../models/exercise.dart';
+import 'package:logger/logger.dart';
 
 class WorkoutEditingService {
   late final FirebaseFunctions _functions;
+  final logger = Logger();
 
   WorkoutEditingService() {
     _functions = FirebaseFunctions.instanceFor(region: 'us-central1');
@@ -26,7 +28,7 @@ class WorkoutEditingService {
     String? reason,
   }) async {
     try {
-      print('DEBUG: Replacing exercise: $exerciseToReplace');
+      logger.e('DEBUG: Replacing exercise: $exerciseToReplace');
 
       final requestData = {
         'exerciseToReplace': exerciseToReplace,
@@ -48,7 +50,7 @@ class WorkoutEditingService {
 
       return null;
     } catch (error) {
-      print('ERROR: Failed to replace exercise: $error');
+      logger.e('ERROR: Failed to replace exercise: $error');
       rethrow;
     }
   }
@@ -61,7 +63,7 @@ class WorkoutEditingService {
     List<String>? excludeExercises,
   }) async {
     try {
-      print('DEBUG: Getting similar exercises for: $targetMuscleGroups');
+      logger.e('DEBUG: Getting similar exercises for: $targetMuscleGroups');
 
       final requestData = {
         'targetMuscleGroups': targetMuscleGroups,
@@ -81,7 +83,7 @@ class WorkoutEditingService {
 
       return null;
     } catch (error) {
-      print('ERROR: Failed to get similar exercises: $error');
+      logger.e('ERROR: Failed to get similar exercises: $error');
       rethrow;
     }
   }

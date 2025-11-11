@@ -49,6 +49,7 @@ dependencies:
   http: ^1.5.0
   fl_chart: ^0.68.0
   confetti: ^0.7.0
+  logger: ^2.6.2
 
 dev_dependencies:
   flutter_test:

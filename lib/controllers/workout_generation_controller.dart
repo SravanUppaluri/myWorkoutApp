@@ -5,6 +5,9 @@ import '../models/workout_template.dart';
 import '../models/exercise.dart';
 import '../services/ai_workout_service.dart';
 import '../services/ai_preferences_service.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 /// Controller responsible for all AI workout generation logic
 /// Extracted from ImprovedAIWorkoutScreen for better maintainability
@@ -107,7 +110,7 @@ class WorkoutGenerationController extends ChangeNotifier {
       }
     } catch (e) {
       _generationError = e.toString();
-      debugPrint('Error in generateOneClickWorkout: $e');
+      logger.e('Error in generateOneClickWorkout: $e');
       return null;
     } finally {
       _setGenerating(false);
@@ -166,7 +169,7 @@ class WorkoutGenerationController extends ChangeNotifier {
 
         'personalizationLevel': 'standard',
         'requestTimeout': 30,
-        'sessionId': 'fast_${template.id}_${timestamp}',
+        'sessionId': 'fast_${template.id}_$timestamp',
         'generationType': 'optimized_template',
         'priority': 'speed',
         'excludeWarmup': true,
@@ -193,7 +196,7 @@ class WorkoutGenerationController extends ChangeNotifier {
       }
     } catch (e) {
       _generationError = e.toString();
-      debugPrint('Error in generateFromTemplate: $e');
+      logger.e('Error in generateFromTemplate: $e');
       return null;
     } finally {
       _setGenerating(false);
@@ -209,7 +212,7 @@ class WorkoutGenerationController extends ChangeNotifier {
 
     for (int attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        debugPrint('🚀 AI Generation attempt $attempt/$maxRetries');
+        logger.e('🚀 AI Generation attempt $attempt/$maxRetries');
 
         final workout = await _aiWorkoutService
             .generateWorkout(request)
@@ -223,14 +226,14 @@ class WorkoutGenerationController extends ChangeNotifier {
             );
 
         if (workout != null) {
-          debugPrint('✅ AI workout generated successfully');
+          logger.e('✅ AI workout generated successfully');
           return workout;
         }
       } catch (e) {
-        debugPrint('⚠️ Generation attempt $attempt failed: $e');
+        logger.e('⚠️ Generation attempt $attempt failed: $e');
 
         if (attempt == maxRetries) {
-          debugPrint('🔄 All attempts failed, generating fallback workout');
+          logger.e('🔄 All attempts failed, generating fallback workout');
           return _generateFallbackWorkout(request);
         }
 
@@ -244,7 +247,7 @@ class WorkoutGenerationController extends ChangeNotifier {
 
   /// Generate a fallback workout when AI generation fails
   Workout _generateFallbackWorkout(Map<String, dynamic> request) {
-    debugPrint('🆘 Generating fallback workout');
+    logger.e('🆘 Generating fallback workout');
 
     final workoutType = request['workoutType'] as String? ?? 'Full Body';
     final duration = request['duration'] as int? ?? 45;
@@ -409,7 +412,7 @@ class WorkoutGenerationController extends ChangeNotifier {
         await AIPreferencesService.trackGeneration('template', workoutRequest);
         await AIPreferencesService.saveLastGenerationParams(workoutRequest);
       } catch (e) {
-        debugPrint('Analytics tracking failed (non-critical): $e');
+        logger.e('Analytics tracking failed (non-critical): $e');
       }
     });
   }

@@ -1,6 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class AIPreferencesService {
   static const String _keyRecentPreferences = 'ai_recent_preferences';
@@ -29,7 +32,7 @@ class AIPreferencesService {
       final jsonString = json.encode(existing);
       await prefs.setString(_keyRecentPreferences, jsonString);
     } catch (e) {
-      print('Error saving recent preference: $e');
+      logger.e('Error saving recent preference: $e');
     }
   }
 
@@ -44,7 +47,7 @@ class AIPreferencesService {
         return decoded.map((item) => Map<String, dynamic>.from(item)).toList();
       }
     } catch (e) {
-      print('Error loading recent preferences: $e');
+      logger.e('Error loading recent preferences: $e');
     }
     return [];
   }
@@ -70,7 +73,7 @@ class AIPreferencesService {
         await prefs.setString(_keyFavoriteTemplates, jsonString);
       }
     } catch (e) {
-      print('Error saving favorite template: $e');
+      logger.e('Error saving favorite template: $e');
     }
   }
 
@@ -85,7 +88,7 @@ class AIPreferencesService {
         return decoded.map((item) => Map<String, dynamic>.from(item)).toList();
       }
     } catch (e) {
-      print('Error loading favorite templates: $e');
+      logger.e('Error loading favorite templates: $e');
     }
     return [];
   }
@@ -101,7 +104,7 @@ class AIPreferencesService {
       final jsonString = json.encode(params);
       await prefs.setString(_keyLastGenerationParams, jsonString);
     } catch (e) {
-      print('Error saving last generation params: $e');
+      logger.e('Error saving last generation params: $e');
     }
   }
 
@@ -115,7 +118,7 @@ class AIPreferencesService {
         return Map<String, dynamic>.from(json.decode(jsonString));
       }
     } catch (e) {
-      print('Error loading last generation params: $e');
+      logger.e('Error loading last generation params: $e');
     }
     return null;
   }
@@ -145,7 +148,7 @@ class AIPreferencesService {
       final jsonString = json.encode(existing);
       await prefs.setString(_keyGenerationHistory, jsonString);
     } catch (e) {
-      print('Error tracking generation: $e');
+      logger.e('Error tracking generation: $e');
     }
   }
 
@@ -171,7 +174,7 @@ class AIPreferencesService {
         return decoded.map((item) => Map<String, dynamic>.from(item)).toList();
       }
     } catch (e) {
-      print('Error loading generation history: $e');
+      logger.e('Error loading generation history: $e');
     }
     return [];
   }
@@ -249,7 +252,7 @@ class AIPreferencesService {
         'totalGenerations': history.length,
       };
     } catch (e) {
-      print('Error getting smart recommendations: $e');
+      logger.e('Error getting smart recommendations: $e');
       return {'hasHistory': false, 'totalGenerations': 0};
     }
   }
@@ -263,7 +266,7 @@ class AIPreferencesService {
       await prefs.remove(_keyLastGenerationParams);
       await prefs.remove(_keyGenerationHistory);
     } catch (e) {
-      print('Error clearing preferences: $e');
+      logger.e('Error clearing preferences: $e');
     }
   }
 
@@ -283,7 +286,7 @@ class AIPreferencesService {
 
       return analytics;
     } catch (e) {
-      print('Error getting analytics: $e');
+      logger.e('Error getting analytics: $e');
       return {};
     }
   }
@@ -346,10 +349,10 @@ class AIPreferencesService {
     required List<Map<String, dynamic>> workoutHistory,
     dynamic userProfile, // Accept user profile to get their goal
   }) {
-    print(
+    logger.e(
       'DEBUG: Generating smart workout with recent exercises: $recentExercises',
     );
-    print('DEBUG: Recent muscle groups: $recentMuscleGroups');
+    logger.e('DEBUG: Recent muscle groups: $recentMuscleGroups');
 
     // Determine muscle groups to avoid based on recent workouts (last 7 days)
     final recentMuscleGroupsSet = recentMuscleGroups.toSet();
@@ -400,7 +403,7 @@ class AIPreferencesService {
           targetMuscleGroup = 'Full Body';
         }
       } catch (e) {
-        print('DEBUG: Error accessing available muscle groups: $e');
+        logger.e('DEBUG: Error accessing available muscle groups: $e');
         targetMuscleGroup = 'Full Body';
       }
     }
@@ -451,7 +454,7 @@ class AIPreferencesService {
           // Use the first goal from the user's goals list
           goal = userProfile.goals.first.toString();
         } catch (e) {
-          print('DEBUG: Error accessing user goals: $e');
+          logger.e('DEBUG: Error accessing user goals: $e');
           goal = _generateGoalFromMuscleGroup(targetMuscleGroup);
         }
       } else if (userProfile.goalData != null &&
@@ -513,7 +516,7 @@ class AIPreferencesService {
       'sessionId': 'session_${timestamp}_${random.nextInt(1000)}',
     };
 
-    print('DEBUG: Generated smart workout params: $smartParams');
+    logger.e('DEBUG: Generated smart workout params: $smartParams');
     return smartParams;
   }
 
@@ -534,7 +537,7 @@ class AIPreferencesService {
         }
       }
     } catch (e) {
-      print('DEBUG: Error extracting recent exercises: $e');
+      logger.e('DEBUG: Error extracting recent exercises: $e');
       // Return empty list if there's an error
     }
 
@@ -617,7 +620,7 @@ class AIPreferencesService {
         }
       }
     } catch (e) {
-      print('DEBUG: Error extracting recent muscle groups: $e');
+      logger.e('DEBUG: Error extracting recent muscle groups: $e');
       // Return empty list if there's an error
     }
 

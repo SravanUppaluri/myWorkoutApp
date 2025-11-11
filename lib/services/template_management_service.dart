@@ -8,9 +8,9 @@ class TemplateManagementService extends ChangeNotifier {
   // Template lists
   List<WorkoutTemplate> _quickTemplates = [];
   List<WorkoutTemplate> _featuredTemplates = [];
-  List<WorkoutTemplate> _customTemplates = [];
-  List<WorkoutTemplate> _favoriteTemplates = [];
-  List<WorkoutTemplate> _recommendedTemplates = [];
+  final List<WorkoutTemplate> _customTemplates = [];
+  final List<WorkoutTemplate> _favoriteTemplates = [];
+  final List<WorkoutTemplate> _recommendedTemplates = [];
   List<WorkoutTemplate> _filteredTemplates = [];
 
   // State
@@ -76,7 +76,7 @@ class TemplateManagementService extends ChangeNotifier {
       _categorizeTemplates(allTemplates);
       _filterTemplatesByCategory();
     } catch (e) {
-      debugPrint('Error loading templates: $e');
+      logger.e('Error loading templates: $e');
     } finally {
       _isLoadingTemplates = false;
       notifyListeners();
@@ -284,7 +284,7 @@ class TemplateManagementService extends ChangeNotifier {
       // Reload templates to reflect changes
       await loadTemplates();
     } catch (e) {
-      debugPrint('Error toggling template favorite: $e');
+      logger.e('Error toggling template favorite: $e');
     }
   }
 
@@ -309,7 +309,7 @@ class TemplateManagementService extends ChangeNotifier {
       await WorkoutTemplateService.saveCustomTemplate(template);
       await loadTemplates();
     } catch (e) {
-      debugPrint('Error creating custom template: $e');
+      logger.e('Error creating custom template: $e');
     }
   }
 
@@ -318,10 +318,10 @@ class TemplateManagementService extends ChangeNotifier {
     try {
       // Note: WorkoutTemplateService doesn't have deleteTemplate method
       // This would need to be implemented in the service
-      debugPrint('Delete template functionality not yet implemented');
+      logger.e('Delete template functionality not yet implemented');
       await loadTemplates();
     } catch (e) {
-      debugPrint('Error deleting custom template: $e');
+      logger.e('Error deleting custom template: $e');
     }
   }
 

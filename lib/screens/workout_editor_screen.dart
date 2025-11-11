@@ -7,6 +7,9 @@ import '../providers/auth_provider.dart';
 import '../services/workout_editing_service.dart';
 import '../utils/constants.dart';
 import 'exercise_selection_screen.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class WorkoutEditorScreen extends StatefulWidget {
   final Workout workout;
@@ -708,7 +711,7 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
   }
 
   void _addNewExercise() async {
-    print('DEBUG: Opening exercise selection screen...');
+    logger.e('DEBUG: Opening exercise selection screen...');
 
     // Open the exercise selection screen to browse and add from library
     final result = await Navigator.push(
@@ -716,11 +719,11 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
       MaterialPageRoute(builder: (context) => const ExerciseSelectionScreen()),
     );
 
-    print('DEBUG: Exercise selection returned: $result');
-    print('DEBUG: Result type: ${result.runtimeType}');
+    logger.e('DEBUG: Exercise selection returned: $result');
+    logger.e('DEBUG: Result type: ${result.runtimeType}');
 
     if (result != null && result is List<WorkoutExercise>) {
-      print('DEBUG: Adding ${result.length} exercises to workout');
+      logger.e('DEBUG: Adding ${result.length} exercises to workout');
 
       setState(() {
         // Add selected exercises to the workout
@@ -729,31 +732,33 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
         );
 
         for (final workoutExercise in result) {
-          print('DEBUG: Processing exercise: ${workoutExercise.exercise.name}');
+          logger.e(
+            'DEBUG: Processing exercise: ${workoutExercise.exercise.name}',
+          );
 
           // Check if exercise is already in the workout
           if (!updatedExercises.any(
             (we) => we.exercise.id == workoutExercise.exercise.id,
           )) {
             updatedExercises.add(workoutExercise);
-            print('DEBUG: Added exercise: ${workoutExercise.exercise.name}');
+            logger.e('DEBUG: Added exercise: ${workoutExercise.exercise.name}');
           } else {
-            print(
+            logger.e(
               'DEBUG: Exercise already exists: ${workoutExercise.exercise.name}',
             );
           }
         }
 
-        print(
+        logger.e(
           'DEBUG: Total exercises before: ${_editableWorkout.exercises.length}',
         );
-        print('DEBUG: Total exercises after: ${updatedExercises.length}');
+        logger.e('DEBUG: Total exercises after: ${updatedExercises.length}');
 
         _editableWorkout = _editableWorkout.copyWith(
           exercises: updatedExercises,
         );
 
-        print(
+        logger.e(
           'DEBUG: Updated workout with ${_editableWorkout.exercises.length} exercises',
         );
       });
@@ -774,9 +779,9 @@ class _WorkoutEditorScreenState extends State<WorkoutEditorScreen> {
         _showSuccessSnackBar('No new exercises added (duplicates skipped)');
       }
     } else {
-      print('DEBUG: No exercises selected or invalid result type');
+      logger.e('DEBUG: No exercises selected or invalid result type');
       if (result == null) {
-        print('DEBUG: User cancelled exercise selection');
+        logger.e('DEBUG: User cancelled exercise selection');
       }
     }
   }

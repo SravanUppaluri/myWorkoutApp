@@ -80,7 +80,7 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
         Container(
           padding: const EdgeInsets.all(AppDimensions.paddingSmall),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
           ),
           child: Icon(Icons.library_books, color: AppColors.primary, size: 24),
@@ -101,7 +101,7 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(
                     context,
-                  ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                  ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -123,7 +123,7 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -184,7 +184,7 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
             _selectedCategory = selected ? category : 'All';
           });
         },
-        selectedColor: AppColors.primary.withOpacity(0.2),
+        selectedColor: AppColors.primary.withValues(alpha: 0.2),
         checkmarkColor: AppColors.primary,
       ),
     );
@@ -211,7 +211,7 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
           _showFavoritesOnly = selected;
         });
       },
-      selectedColor: AppColors.primary.withOpacity(0.2),
+      selectedColor: AppColors.primary.withValues(alpha: 0.2),
     );
   }
 
@@ -277,7 +277,9 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
             margin: const EdgeInsets.only(bottom: AppDimensions.paddingSmall),
             child: Card(
               elevation: isSelected ? 8 : 2,
-              color: isSelected ? AppColors.primary.withOpacity(0.1) : null,
+              color: isSelected
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : null,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
                 side: BorderSide(
@@ -293,7 +295,7 @@ class _TemplateGenerationWidgetState extends State<TemplateGenerationWidget> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(
                       AppDimensions.radiusSmall,
                     ),

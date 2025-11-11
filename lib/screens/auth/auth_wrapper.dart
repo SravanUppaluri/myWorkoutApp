@@ -4,6 +4,9 @@ import '../../providers/auth_provider.dart';
 import 'login_screen.dart';
 import '../home_screen.dart';
 import '../../utils/constants.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
@@ -12,21 +15,23 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) {
-        print('AuthWrapper: Current status = ${authProvider.status}');
-        print('AuthWrapper: User = ${authProvider.user?.email ?? 'null'}');
+        logger.e('AuthWrapper: Current status = ${authProvider.status}');
+        logger.e('AuthWrapper: User = ${authProvider.user?.email ?? 'null'}');
 
         switch (authProvider.status) {
           case AuthStatus.loading:
           case AuthStatus.initial:
-            print('AuthWrapper: Showing loading screen');
+            logger.e('AuthWrapper: Showing loading screen');
             return const LoadingScreen();
 
           case AuthStatus.authenticated:
-            print('AuthWrapper: User authenticated, showing home screen');
+            logger.e('AuthWrapper: User authenticated, showing home screen');
             return const HomeScreen();
 
           case AuthStatus.unauthenticated:
-            print('AuthWrapper: User not authenticated, showing login screen');
+            logger.e(
+              'AuthWrapper: User not authenticated, showing login screen',
+            );
             return const LoginScreen();
         }
       },

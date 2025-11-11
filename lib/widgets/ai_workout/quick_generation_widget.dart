@@ -31,7 +31,7 @@ class _QuickGenerationWidgetState extends State<QuickGenerationWidget> {
             borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -46,7 +46,7 @@ class _QuickGenerationWidgetState extends State<QuickGenerationWidget> {
                   Container(
                     padding: const EdgeInsets.all(AppDimensions.paddingSmall),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         AppDimensions.radiusSmall,
                       ),
@@ -71,9 +71,11 @@ class _QuickGenerationWidgetState extends State<QuickGenerationWidget> {
                           'Generate instantly based on your profile and history',
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color
+                                    ?.withValues(alpha: 0.7),
                               ),
                         ),
                       ],
@@ -160,11 +162,13 @@ class _QuickGenerationWidgetState extends State<QuickGenerationWidget> {
               Container(
                 padding: const EdgeInsets.all(AppDimensions.paddingMedium),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.05),
+                  color: AppColors.primary.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(
                     AppDimensions.radiusSmall,
                   ),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -230,9 +234,9 @@ class _QuickGenerationWidgetState extends State<QuickGenerationWidget> {
         vertical: 6,
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppDimensions.radiusSmall),
-        border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
       ),
       child: Text(
         insight,

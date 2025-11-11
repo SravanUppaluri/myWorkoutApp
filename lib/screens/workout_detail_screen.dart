@@ -5,6 +5,9 @@ import 'workout_session_screen.dart';
 import 'workout_editor_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/workout_provider.dart';
+import 'package:logger/logger.dart';
+
+final logger = Logger();
 
 class WorkoutDetailScreen extends StatefulWidget {
   final Workout workout;
@@ -24,29 +27,29 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
     _workout = widget.workout;
 
     // Console logging for analysis
-    print('🎯 WORKOUT DETAIL SCREEN OPENED');
-    print('📊 Workout ID: ${_workout.id}');
-    print('📊 Workout Name: "${_workout.name}"');
-    print('📊 Workout Description: "${_workout.description}"');
-    print('📊 Exercise Count: ${_workout.exercises.length}');
-    print('📊 Estimated Duration: ${_workout.estimatedDuration} minutes');
-    print('📊 Difficulty: ${_workout.difficulty}');
-    print('📊 Created At: ${_workout.createdAt}');
+    logger.e('🎯 WORKOUT DETAIL SCREEN OPENED');
+    logger.e('📊 Workout ID: ${_workout.id}');
+    logger.e('📊 Workout Name: "${_workout.name}"');
+    logger.e('📊 Workout Description: "${_workout.description}"');
+    logger.e('📊 Exercise Count: ${_workout.exercises.length}');
+    logger.e('📊 Estimated Duration: ${_workout.estimatedDuration} minutes');
+    logger.e('📊 Difficulty: ${_workout.difficulty}');
+    logger.e('📊 Created At: ${_workout.createdAt}');
 
     // Log exercise details for optimization analysis
-    print('📊 Exercise Details:');
+    logger.e('📊 Exercise Details:');
     for (int i = 0; i < _workout.exercises.length; i++) {
       final exercise = _workout.exercises[i];
-      print(
+      logger.e(
         '  ${i + 1}. ${exercise.exercise.name} - ${exercise.sets}x${exercise.reps} (${exercise.restTime}s rest)',
       );
     }
-    print('🎯 END WORKOUT DETAIL LOGGING');
+    logger.e('🎯 END WORKOUT DETAIL LOGGING');
   }
 
   void _startWorkout() {
-    print('🏃‍♀️ USER ACTION: Starting workout "${_workout.name}"');
-    print('📊 Starting at: ${DateTime.now()}');
+    logger.e('🏃‍♀️ USER ACTION: Starting workout "${_workout.name}"');
+    logger.e('📊 Starting at: ${DateTime.now()}');
 
     Navigator.push(
       context,
@@ -57,7 +60,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
   }
 
   void _editWorkout() async {
-    print('✏️ USER ACTION: Editing workout "${_workout.name}"');
+    logger.e('✏️ USER ACTION: Editing workout "${_workout.name}"');
 
     final result = await Navigator.push(
       context,
@@ -68,8 +71,8 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
     );
 
     if (result != null && result is Workout) {
-      print('✅ WORKOUT EDIT SUCCESS: "${result.name}"');
-      print('📊 Updated at: ${DateTime.now()}');
+      logger.e('✅ WORKOUT EDIT SUCCESS: "${result.name}"');
+      logger.e('📊 Updated at: ${DateTime.now()}');
 
       setState(() {
         _workout = result;
@@ -84,12 +87,14 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
         ),
       );
     } else {
-      print('❌ WORKOUT EDIT CANCELLED');
+      logger.e('❌ WORKOUT EDIT CANCELLED');
     }
   }
 
   void _deleteWorkout() {
-    print('🗑️ USER ACTION: Attempting to delete workout "${_workout.name}"');
+    logger.e(
+      '🗑️ USER ACTION: Attempting to delete workout "${_workout.name}"',
+    );
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
@@ -123,7 +128,7 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
           ),
           ElevatedButton(
             onPressed: () async {
-              print(
+              logger.e(
                 '🗑️ CONFIRMING DELETE: "${_workout.name}" (ID: ${_workout.id})',
               );
 
@@ -137,11 +142,13 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
               if (mounted) {
                 Navigator.pop(context); // Close dialog
                 if (success) {
-                  print('✅ DELETE SUCCESS: Workout "${_workout.name}" deleted');
+                  logger.e(
+                    '✅ DELETE SUCCESS: Workout "${_workout.name}" deleted',
+                  );
                   // Pop this detail screen and notify caller we deleted
                   Navigator.pop(context, true);
                 } else {
-                  print('❌ DELETE FAILED: ${provider.errorMessage}');
+                  logger.e('❌ DELETE FAILED: ${provider.errorMessage}');
                   final error = provider.errorMessage;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

@@ -10,6 +10,7 @@ import '../services/ai_workout_service.dart';
 import '../services/template_ui_service.dart';
 import 'workout_session_screen.dart';
 import 'workout_detail_screen.dart';
+import 'package:logger/logger.dart';
 
 class ImprovedAIWorkoutScreen extends StatefulWidget {
   const ImprovedAIWorkoutScreen({super.key});
@@ -544,6 +545,8 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
   void _generateOneClickWorkout() async {
     setState(() => _isGenerating = true);
 
+    final logger = Logger();
+
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final currentUser = authProvider.user;
@@ -561,10 +564,10 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
         'focusArea': focusArea,
         'primaryMuscles': [focusArea], // Add primary muscles array
         'goal': focusArea.isNotEmpty
-            ? '${focusArea}-focused workout'
+            ? '$focusArea-focused workout'
             : 'General fitness workout',
         'workoutType': focusArea.isNotEmpty
-            ? '${focusArea} Training'
+            ? '$focusArea Training'
             : 'General Fitness',
         'equipment': ['all equipment'], // Default equipment
         'sessionId': 'quick_${DateTime.now().millisecondsSinceEpoch}',
@@ -577,32 +580,32 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
       late Workout workout;
 
       // Debug: Print the workout request details
-      print('🎯 WORKOUT REQUEST DEBUG:');
-      print('Focus Area: ${workoutRequest['focusArea']}');
-      print('Primary Muscles: ${workoutRequest['primaryMuscles']}');
-      print('Goal: ${workoutRequest['goal']}');
-      print('Instructions: ${workoutRequest['instructions']}');
-      print('Full Request: $workoutRequest');
+      logger.e('🎯 WORKOUT REQUEST DEBUG:');
+      logger.e('Focus Area: ${workoutRequest['focusArea']}');
+      logger.e('Primary Muscles: ${workoutRequest['primaryMuscles']}');
+      logger.e('Goal: ${workoutRequest['goal']}');
+      logger.e('Instructions: ${workoutRequest['instructions']}');
+      logger.e('Full Request: $workoutRequest');
 
       if (_templateService.useAIGeneration) {
-        print('🤖 Using AI generation...');
+        logger.e('🤖 Using AI generation...');
         // Generate with AI
         final aiService = AIWorkoutService();
         workout = await aiService.generateWorkout(workoutRequest) as Workout;
 
         // Debug: Check the generated workout
-        print('🏋️ AI GENERATED WORKOUT:');
-        print('Name: ${workout.name}');
-        print('Description: ${workout.description}');
-        print('Exercises:');
+        logger.e('🏋️ AI GENERATED WORKOUT:');
+        logger.e('Name: ${workout.name}');
+        logger.e('Description: ${workout.description}');
+        logger.e('Exercises:');
         for (int i = 0; i < workout.exercises.length; i++) {
           final exercise = workout.exercises[i];
-          print(
+          logger.e(
             '  ${i + 1}. ${exercise.exercise.name} - ${exercise.exercise.primaryMuscles.join(", ")}',
           );
         }
       } else {
-        print('🎭 Using mock generation...');
+        logger.e('🎭 Using mock generation...');
         // Create simple mock workout
         workout = _createMockQuickWorkout(
           _selectedDuration,
@@ -683,7 +686,7 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
       exercises.add(
         WorkoutExercise(
           exercise: Exercise(
-            id: 'mock_quick_${i}',
+            id: 'mock_quick_$i',
             name: template['name']!,
             category: template['muscle']!.toLowerCase(),
             primaryMuscles: [template['muscle']!],
@@ -718,12 +721,10 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
 
     return Workout(
       id: 'mock_quick_${DateTime.now().millisecondsSinceEpoch}',
-      name: focusArea.isNotEmpty
-          ? '${focusArea} Focus Workout'
-          : 'Quick Workout',
+      name: focusArea.isNotEmpty ? '$focusArea Focus Workout' : 'Quick Workout',
       description: focusArea.isNotEmpty
-          ? 'Targeted ${duration}-minute ${focusArea.toLowerCase()} workout'
-          : 'Quick ${duration}-minute workout',
+          ? 'Targeted $duration-minute ${focusArea.toLowerCase()} workout'
+          : 'Quick $duration-minute workout',
       exercises: exercises,
       estimatedDuration: duration,
       difficulty: 'Intermediate',

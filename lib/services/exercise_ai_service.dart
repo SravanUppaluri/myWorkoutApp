@@ -60,7 +60,7 @@ class ExerciseAIService {
     try {
       // Validate input before sending to AI
       if (!_isValidExerciseQuery(exerciseName)) {
-        print('Invalid exercise query detected: $exerciseName');
+        logger.e('Invalid exercise query detected: $exerciseName');
         return null;
       }
 
@@ -71,7 +71,7 @@ class ExerciseAIService {
         // Check if AI returned an error response
         if (result.data is Map<String, dynamic> &&
             result.data['error'] == 'not_found') {
-          print('AI rejected query as invalid: ${result.data['message']}');
+          logger.e('AI rejected query as invalid: ${result.data['message']}');
           return null;
         }
 
@@ -81,17 +81,19 @@ class ExerciseAIService {
         // Save the AI-generated exercise to the database for future use
         try {
           final savedId = await DatabaseService.saveAIExercise(result.data);
-          print('Successfully saved AI exercise to database: $savedId');
+          logger.e('Successfully saved AI exercise to database: $savedId');
         } catch (saveError) {
           // Log the error but don't fail the main operation
-          print('Warning: Could not save AI exercise to database: $saveError');
+          logger.e(
+            'Warning: Could not save AI exercise to database: $saveError',
+          );
         }
 
         return exercise;
       }
       return null;
     } catch (e) {
-      print('Error searching exercise with AI: $e');
+      logger.e('Error searching exercise with AI: $e');
       rethrow;
     }
   }
@@ -115,7 +117,7 @@ class ExerciseAIService {
       }
       return [];
     } catch (e) {
-      print('Error getting exercise variations: $e');
+      logger.e('Error getting exercise variations: $e');
       rethrow;
     }
   }
