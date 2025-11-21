@@ -267,6 +267,7 @@ class TemplateUIService {
             const SizedBox(height: AppDimensions.marginMedium),
             DropdownButtonFormField<TemplateCategory>(
               value: _selectedTemplateCategory,
+              isExpanded: true,
               onChanged: (TemplateCategory? newValue) {
                 setSelectedTemplateCategory(newValue);
 
@@ -308,6 +309,25 @@ class TemplateUIService {
                   vertical: AppDimensions.paddingSmall,
                 ),
               ),
+              selectedItemBuilder: (BuildContext context) {
+                return TemplateCategory.values.map((category) {
+                  return Row(
+                    children: [
+                      Icon(category.icon, size: 20, color: AppColors.primary),
+                      const SizedBox(width: AppDimensions.marginSmall),
+                      Expanded(
+                        child: Text(
+                          category.displayName,
+                          style: AppTextStyles.bodyText1.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList();
+              },
               items: TemplateCategory.values.map((category) {
                 return DropdownMenuItem<TemplateCategory>(
                   value: category,
@@ -315,27 +335,32 @@ class TemplateUIService {
                     children: [
                       Icon(category.icon, size: 20, color: AppColors.primary),
                       const SizedBox(width: AppDimensions.marginSmall),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            category.displayName,
-                            style: AppTextStyles.bodyText1.copyWith(
-                              fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              category.displayName,
+                              style: AppTextStyles.bodyText1.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                          Text(
-                            category.description,
-                            style: AppTextStyles.caption.copyWith(
-                              color: isDarkMode
-                                  ? AppColors.darkOnSurface.withValues(
-                                      alpha: 0.7,
-                                    )
-                                  : AppColors.onSurface.withValues(alpha: 0.7),
+                            Text(
+                              category.description,
+                              style: AppTextStyles.caption.copyWith(
+                                color: isDarkMode
+                                    ? AppColors.darkOnSurface.withValues(
+                                        alpha: 0.7,
+                                      )
+                                    : AppColors.onSurface.withValues(
+                                        alpha: 0.7,
+                                      ),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -1219,7 +1244,7 @@ class TemplateUIService {
         // Create workout request for this day
         final workoutRequest = {
           'userId': currentUser.id,
-          'goal': 'Progressive ${templateName} training - Day ${day + 1}',
+          'goal': 'Progressive $templateName training - Day ${day + 1}',
           'fitnessLevel': fitnessLevel,
           'workoutType': dayInfo['type'],
           'duration': duration,
@@ -1227,7 +1252,7 @@ class TemplateUIService {
           'focusArea': dayInfo['focusArea'] ?? dayInfo['muscleGroups'].first,
           'equipment': ['Dumbbells', 'Barbell', 'Bodyweight'],
           'additionalNotes':
-              'Day ${day + 1} of 7-day ${templateName} plan. ${dayInfo['description']}',
+              'Day ${day + 1} of 7-day $templateName plan. ${dayInfo['description']}',
           'sessionId':
               '${templateName.toLowerCase()}_day${day + 1}_${DateTime.now().millisecondsSinceEpoch}',
           'dayNumber': day + 1,
@@ -1291,7 +1316,7 @@ class TemplateUIService {
         WorkoutExercise(
           exercise: Exercise(
             id: 'mock_${muscleGroup.toLowerCase()}_${exercises.length}',
-            name: 'Mock ${muscleGroup} Exercise',
+            name: 'Mock $muscleGroup Exercise',
             category: muscleGroup.toLowerCase(),
             equipment:
                 template.params['equipment'] as List<String>? ?? ['Bodyweight'],
@@ -1306,7 +1331,7 @@ class TemplateUIService {
             tempo: 'Moderate',
             muscleGroup: muscleGroup,
             muscleInfo: MuscleInfo(
-              scientificName: '${muscleGroup} muscle',
+              scientificName: '$muscleGroup muscle',
               commonName: muscleGroup,
               muscleRegions: [
                 MuscleRegion(
@@ -1547,7 +1572,7 @@ class TemplateUIService {
         WorkoutExercise(
           exercise: Exercise(
             id: 'mock_day${dayNumber}_${muscleGroup.toLowerCase()}_$i',
-            name: 'Mock ${muscleGroup} Exercise ${i + 1}',
+            name: 'Mock $muscleGroup Exercise ${i + 1}',
             category: muscleGroup.toLowerCase(),
             equipment: ['Dumbbells', 'Bodyweight'],
             targetRegion: [muscleGroup],
@@ -1561,7 +1586,7 @@ class TemplateUIService {
             tempo: 'Moderate',
             muscleGroup: muscleGroup,
             muscleInfo: MuscleInfo(
-              scientificName: '${muscleGroup} muscle',
+              scientificName: '$muscleGroup muscle',
               commonName: muscleGroup,
               muscleRegions: [
                 MuscleRegion(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DatabaseService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -232,8 +233,19 @@ class DatabaseService {
     Map<String, dynamic> exerciseData,
   ) async {
     try {
-      // Check if exercise already exists by name
-      final existingQuery = await exercises
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        throw Exception('User must be logged in to save AI exercises');
+      }
+
+      // Use user-specific collection for AI exercises
+      final userAIExercises = _firestore
+          .collection('user_ai_exercises')
+          .doc(user.uid)
+          .collection('exercises');
+
+      // Check if exercise already exists by name in user's AI exercises
+      final existingQuery = await userAIExercises
           .where('name', isEqualTo: exerciseData['name'])
           .limit(1)
           .get();
@@ -243,23 +255,39 @@ class DatabaseService {
         return existingQuery.docs.first.id;
       }
 
-      // Add the exercise to the database
-      final docRef = await exercises.add({
+      // Add the exercise to the user's AI exercises collection
+      final docRef = await userAIExercises.add({
         ...exerciseData,
-        'isPublic': true,
+        'isPublic': false, // User's personal AI exercise
         'source': exerciseData['source'] ?? 'ai_generated',
+        'userId': user.uid,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
       print(
-        'Saved AI exercise to database: ${exerciseData['name']} (ID: ${docRef.id})',
+        'Saved AI exercise to user collection: ${exerciseData['name']} (ID: ${docRef.id})',
       );
       return docRef.id;
     } catch (e) {
       print('Error saving AI exercise to database: $e');
       rethrow;
     }
+  }
+
+  /// Get user's AI-generated exercises
+  static Stream<QuerySnapshot> getUserAIExercises() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User must be logged in to access AI exercises');
+    }
+
+    return _firestore
+        .collection('user_ai_exercises')
+        .doc(user.uid)
+        .collection('exercises')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 
   /// Get exercises by category

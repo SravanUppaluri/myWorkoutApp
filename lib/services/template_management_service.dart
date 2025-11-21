@@ -8,9 +8,9 @@ class TemplateManagementService extends ChangeNotifier {
   // Template lists
   List<WorkoutTemplate> _quickTemplates = [];
   List<WorkoutTemplate> _featuredTemplates = [];
-  List<WorkoutTemplate> _customTemplates = [];
-  List<WorkoutTemplate> _favoriteTemplates = [];
-  List<WorkoutTemplate> _recommendedTemplates = [];
+  final List<WorkoutTemplate> _customTemplates = [];
+  final List<WorkoutTemplate> _favoriteTemplates = [];
+  final List<WorkoutTemplate> _recommendedTemplates = [];
   List<WorkoutTemplate> _filteredTemplates = [];
 
   // State
@@ -406,10 +406,5 @@ class TemplateManagementService extends ChangeNotifier {
     });
 
     return candidates.take(6).toList();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

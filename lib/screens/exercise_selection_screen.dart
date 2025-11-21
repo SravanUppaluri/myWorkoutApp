@@ -328,6 +328,8 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Exercises (${_selectedExercises.length})'),
@@ -349,7 +351,7 @@ class _ExerciseSelectionScreenState extends State<ExerciseSelectionScreen> {
           // Search Bar
           Container(
             padding: const EdgeInsets.all(AppDimensions.paddingMedium),
-            color: AppColors.lightGray,
+            color: isDarkMode ? AppColors.darkSurface : AppColors.lightGray,
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(

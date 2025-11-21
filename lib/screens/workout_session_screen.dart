@@ -1073,24 +1073,26 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
               ),
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingLarge),
+                  padding: const EdgeInsets.all(AppDimensions.paddingSmall),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // Workout Name at the top
                       Container(
+                        height: 80,
                         margin: const EdgeInsets.only(top: 20),
-                        child: Text(
-                          widget.workout.name,
-                          style: AppTextStyles.headline1.copyWith(
-                            color: isDarkMode
-                                ? AppColors.darkOnSurface
-                                : AppColors.onSurface,
-                            fontWeight: FontWeight.bold,
+                        child: Center(
+                          child: Text(
+                            widget.workout.name,
+                            style: AppTextStyles.headline2.copyWith(
+                              color: isDarkMode ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
 
@@ -1243,8 +1245,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                         // Single Exercise Display
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                            horizontal: 12,
+                            vertical: 2,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
@@ -1261,7 +1263,7 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                               fontWeight: FontWeight.w700,
                             ),
                             textAlign: TextAlign.center,
-                            maxLines: 2,
+                            maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -1495,8 +1497,9 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: AppColors.onPrimary,
+                      padding: const EdgeInsets.all(8),
                     ),
-                    child: const Text('Complete'),
+                    child: const Icon(Icons.check, size: 20),
                   ),
           ),
         );
@@ -2172,12 +2175,12 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                               // Weight Input
                               Expanded(
                                 child: SizedBox(
-                                  height: 36,
+                                  height: 40,
                                   child: TextFormField(
                                     initialValue: setLog['weight'].toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: isDarkMode
                                           ? AppColors.darkOnSurface
@@ -2214,8 +2217,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                       ),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 8,
+                                            horizontal: 4,
+                                            vertical: 10,
                                           ),
                                       fillColor: isDarkMode
                                           ? AppColors.darkBackground
@@ -2236,12 +2239,12 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                               // Reps Input
                               Expanded(
                                 child: SizedBox(
-                                  height: 36,
+                                  height: 40,
                                   child: TextFormField(
                                     initialValue: setLog['reps'].toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: isDarkMode
                                           ? AppColors.darkOnSurface
@@ -2278,8 +2281,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
                                       ),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 8,
+                                            horizontal: 4,
+                                            vertical: 10,
                                           ),
                                       fillColor: isDarkMode
                                           ? AppColors.darkBackground

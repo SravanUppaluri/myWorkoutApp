@@ -22,8 +22,6 @@ function validateExerciseData(exerciseData) {
     "equipment",
     "primaryMuscles",
     "difficulty",
-    "movementType",
-    "targetRegion",
     "muscleGroup",
   ];
 
@@ -237,6 +235,7 @@ function sanitizeExerciseData(exerciseData) {
 
   // Add default values for optional fields
   if (!sanitized.secondaryMuscles) sanitized.secondaryMuscles = [];
+  if (!sanitized.movementType) sanitized.movementType = "Compound";
   if (!sanitized.gripType) sanitized.gripType = "Standard";
   if (!sanitized.rangeOfMotion) sanitized.rangeOfMotion = "Full";
   if (!sanitized.tempo) sanitized.tempo = "Moderate";

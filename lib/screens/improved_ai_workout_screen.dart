@@ -177,14 +177,6 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
             label: 'Template Mode',
           ),
         ),
-        const SizedBox(width: AppDimensions.marginSmall),
-        Expanded(
-          child: _buildModeButton(
-            mode: 'favorites',
-            icon: Icons.favorite,
-            label: 'Favorites',
-          ),
-        ),
       ],
     );
   }
@@ -257,8 +249,6 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
         return _buildQuickGeneration();
       case 'template':
         return _buildTemplateGeneration();
-      case 'favorites':
-        return _buildFavoritesMode();
       default:
         return _buildQuickGeneration();
     }
@@ -315,10 +305,6 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
       _onTemplateStateChanged,
       onGenerate: _generateFromTemplate,
     );
-  }
-
-  Widget _buildFavoritesMode() {
-    return const Center(child: Text('Favorites mode - Coming soon!'));
   }
 
   Widget _buildDurationSelector() {
@@ -417,6 +403,30 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
                 ),
                 prefixIcon: Icon(Icons.search, color: AppColors.primary),
               ),
+            ),
+            const SizedBox(height: AppDimensions.marginSmall),
+            Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkOnSurface.withValues(alpha: 0.6)
+                      : AppColors.onSurface.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Tip: You can type multiple muscle groups for combined focus (e.g., "bicep and core")',
+                    style: AppTextStyles.caption.copyWith(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.darkOnSurface.withValues(alpha: 0.6)
+                          : AppColors.onSurface.withValues(alpha: 0.6),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -554,24 +564,22 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
 
       // Create workout request
       final focusArea = _keywordController.text.trim();
+      final hasFocusArea = focusArea.isNotEmpty;
+
       final workoutRequest = {
         'userId': currentUser.id,
         'fitnessLevel': currentUser.fitnessLevel,
         'duration': _selectedDuration,
-        'focusArea': focusArea,
-        'primaryMuscles': [focusArea], // Add primary muscles array
-        'goal': focusArea.isNotEmpty
-            ? '${focusArea}-focused workout'
+        'focusArea': hasFocusArea ? focusArea : 'Full Body',
+        'goal': hasFocusArea
+            ? '$focusArea-focused workout'
             : 'General fitness workout',
-        'workoutType': focusArea.isNotEmpty
-            ? '${focusArea} Training'
-            : 'General Fitness',
         'equipment': ['all equipment'], // Default equipment
         'sessionId': 'quick_${DateTime.now().millisecondsSinceEpoch}',
         'useAI': _templateService.useAIGeneration,
-        'instructions': focusArea.isNotEmpty
-            ? 'Focus on $focusArea exercises and movements. Ensure most exercises target the $focusArea muscle group.'
-            : 'Create a balanced full-body workout.',
+        'instructions': hasFocusArea
+            ? 'Focus on $focusArea exercises and movements. Ensure most exercises target the $focusArea muscle group. Do not add any warming up or cooling down exercises.'
+            : 'Create a balanced full-body workout. Do not add any warming up or cooling down exercises.',
       };
 
       late Workout workout;
@@ -683,7 +691,7 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
       exercises.add(
         WorkoutExercise(
           exercise: Exercise(
-            id: 'mock_quick_${i}',
+            id: 'mock_quick_$i',
             name: template['name']!,
             category: template['muscle']!.toLowerCase(),
             primaryMuscles: [template['muscle']!],
@@ -719,11 +727,11 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
     return Workout(
       id: 'mock_quick_${DateTime.now().millisecondsSinceEpoch}',
       name: focusArea.isNotEmpty
-          ? '${focusArea} Focus Workout'
+          ? '$focusArea Focus Workout'
           : 'Quick Workout',
       description: focusArea.isNotEmpty
-          ? 'Targeted ${duration}-minute ${focusArea.toLowerCase()} workout'
-          : 'Quick ${duration}-minute workout',
+          ? 'Targeted $duration-minute ${focusArea.toLowerCase()} workout'
+          : 'Quick $duration-minute workout',
       exercises: exercises,
       estimatedDuration: duration,
       difficulty: 'Intermediate',
@@ -762,11 +770,6 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
                 '🎯',
                 'Template Mode',
                 '7-day progressive workout plans',
-              ),
-              _buildInfoItem(
-                '❤️',
-                'Favorites',
-                'Save and reuse your favorite workouts',
               ),
             ],
           ),
@@ -885,66 +888,77 @@ class _ImprovedAIWorkoutScreenState extends State<ImprovedAIWorkoutScreen> {
               ],
             ),
           ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           actions: [
-            // First row of buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
-                    'Cancel',
-                    style: AppTextStyles.bodyText1.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => _editWorkout(workout),
-                  child: Text(
-                    'Edit',
-                    style: AppTextStyles.bodyText1.copyWith(
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Second row of buttons
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () => _saveWorkout(workout, currentUser),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.grey[100],
-                      foregroundColor: AppColors.primary,
-                    ),
-                    child: Text(
-                      'Save for Later',
-                      style: AppTextStyles.bodyText1.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
+                // First row: Cancel and Edit buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Cancel',
+                        style: AppTextStyles.bodyText1.copyWith(
+                          color: Colors.grey[600],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => _saveAndStartWorkout(workout, currentUser),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: Text(
-                      'Save & Start',
-                      style: AppTextStyles.bodyText1.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                    TextButton(
+                      onPressed: () => _editWorkout(workout),
+                      child: Text(
+                        'Edit',
+                        style: AppTextStyles.bodyText1.copyWith(
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                // Second row: Save for Later and Save & Start buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => _saveWorkout(workout, currentUser),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: AppColors.primary),
+                          foregroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: Text(
+                          'Save for Later',
+                          style: AppTextStyles.bodyText2.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            _saveAndStartWorkout(workout, currentUser),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: Text(
+                          'Save & Start',
+                          style: AppTextStyles.bodyText2.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

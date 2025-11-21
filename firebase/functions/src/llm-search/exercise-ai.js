@@ -80,7 +80,7 @@ exports.searchExerciseWithAI = functions.https.onCall(async (data, context) => {
 
     // Call Gemini API
     const aiResponse = await geminiClient.generateContent(prompt, {
-      maxTokens: 600,
+      maxTokens: 2150,
       temperature: 0.3,
     });
 
@@ -153,7 +153,7 @@ exports.searchExerciseWithAI = functions.https.onCall(async (data, context) => {
     // Optional: Save the AI-generated exercise to a special collection for review
     await admin
       .firestore()
-      .collection("ai_generated_exercises")
+      .collection("exercises")
       .doc(enhancedExerciseData.id)
       .set({
         ...enhancedExerciseData,
@@ -228,7 +228,7 @@ exports.getExerciseVariations = functions.https.onCall(
 
       // Call Gemini
       const aiResponse = await geminiClient.generateContent(prompt, {
-        maxTokens: 800,
+        maxTokens: 2400,
         temperature: 0.4, // Slightly higher for more creative variations
       });
 

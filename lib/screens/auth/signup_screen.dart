@@ -66,6 +66,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -88,7 +90,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                 Text(
                   'Create Account',
-                  style: AppTextStyles.headline1,
+                  style: AppTextStyles.headline1.copyWith(
+                    color: isDarkMode
+                        ? AppColors.darkOnSurface
+                        : AppColors.onSurface,
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
@@ -97,7 +103,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Text(
                   'Join us and start your fitness journey today',
                   style: AppTextStyles.bodyText1.copyWith(
-                    color: AppColors.darkGray,
+                    color: isDarkMode
+                        ? AppColors.darkOnSurface.withOpacity(0.7)
+                        : AppColors.darkGray,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -108,9 +116,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 TextFormField(
                   controller: _nameController,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.darkOnSurface
+                        : AppColors.onSurface,
+                  ),
+                  decoration: InputDecoration(
                     labelText: 'Full Name',
-                    prefixIcon: Icon(Icons.person),
+                    labelStyle: TextStyle(
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -129,9 +152,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.darkOnSurface
+                        : AppColors.onSurface,
+                  ),
+                  decoration: InputDecoration(
                     labelText: 'Email',
-                    prefixIcon: Icon(Icons.email),
+                    labelStyle: TextStyle(
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -152,14 +190,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.darkOnSurface
+                        : AppColors.onSurface,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
+                    labelStyle: TextStyle(
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        color: isDarkMode
+                            ? AppColors.darkOnSurface.withOpacity(0.7)
+                            : AppColors.darkGray,
                       ),
                       onPressed: () {
                         setState(() {
@@ -185,14 +241,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
+                  style: TextStyle(
+                    color: isDarkMode
+                        ? AppColors.darkOnSurface
+                        : AppColors.onSurface,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
+                    labelStyle: TextStyle(
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.lock_outline,
+                      color: isDarkMode
+                          ? AppColors.darkOnSurface.withOpacity(0.7)
+                          : AppColors.darkGray,
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureConfirmPassword
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        color: isDarkMode
+                            ? AppColors.darkOnSurface.withOpacity(0.7)
+                            : AppColors.darkGray,
                       ),
                       onPressed: () {
                         setState(() {
@@ -256,7 +330,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: AppTextStyles.bodyText1,
+                      style: AppTextStyles.bodyText1.copyWith(
+                        color: isDarkMode
+                            ? AppColors.darkOnSurface
+                            : AppColors.onSurface,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {

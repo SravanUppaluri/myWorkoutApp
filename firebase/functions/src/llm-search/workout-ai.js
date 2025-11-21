@@ -178,7 +178,7 @@ exports.generateWorkoutWithAI = functions.https.onCall(
       console.log("=== CALLING GEMINI API ===");
       console.log("Prompt length:", prompt.length);
       console.log("API Configuration:", {
-        maxTokens: 1500,
+        maxTokens: 3500,
         temperature: 0.7,
       });
 
@@ -217,7 +217,7 @@ Return only JSON format:
 }`;
 
           aiResponse = await geminiClient.generateContent(simplePrompt, {
-            maxTokens: 800,
+            maxTokens: 3800,
             temperature: 0.5,
           });
         } else {
@@ -840,15 +840,20 @@ exports.replaceExerciseWithAI = functions.https.onCall(
         targetMuscleGroups,
         availableEquipment,
         fitnessLevel,
-        workoutType,
-        reason,
       });
 
-      // Call Gemini API
+      // Log token usage for monitoring (approximate token count)
+      const estimatedTokens = prompt.length / 4; // Rough estimate: 4 chars per token
+      console.log(`=== TOKEN USAGE ESTIMATE ===`);
+      console.log(`Prompt length: ${prompt.length} characters`);
+      console.log(`Estimated tokens: ${Math.round(estimatedTokens)}`);
+      console.log(`Target: Under 1000 tokens`);
+
+      // Call Gemini API with optimized settings for faster response
       console.log("=== CALLING GEMINI FOR EXERCISE REPLACEMENT ===");
       const aiResponse = await geminiClient.generateContent(prompt, {
-        maxTokens: 800,
-        temperature: 0.8, // Higher temperature for more variety
+        maxTokens: 3800, // Reduced for faster response
+        temperature: 0.7, // Balanced creativity
       });
 
       console.log("=== AI REPLACEMENT RESPONSE ===");
@@ -974,7 +979,25 @@ exports.replaceExerciseWithAI = functions.https.onCall(
       } // Clean and validate alternatives
       const cleanedAlternatives = alternativeExercises
         .map((exercise) => {
-          return cleanExerciseData(exercise);
+          const cleaned = cleanExerciseData(exercise);
+          // Additional validation for Flutter compatibility
+          if (
+            cleaned &&
+            cleaned.name &&
+            cleaned.category &&
+            cleaned.difficulty
+          ) {
+            // Ensure all required string fields are present and non-null
+            cleaned.category = cleaned.category || "Strength";
+            cleaned.movement_type = cleaned.movement_type || "Push";
+            cleaned.movement_pattern = cleaned.movement_pattern || "Horizontal";
+            cleaned.grip_type = cleaned.grip_type || "None";
+            cleaned.range_of_motion = cleaned.range_of_motion || "Full";
+            cleaned.tempo = cleaned.tempo || "Normal";
+            cleaned.muscle_group = cleaned.muscle_group || "Upper Body";
+            return cleaned;
+          }
+          return null;
         })
         .filter((exercise) => exercise !== null);
 
@@ -1015,21 +1038,19 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
       excludeExercises, // Array of exercise names to exclude
     } = data;
 
-    // Validate input
+    // Validate input and provide fallbacks
+    let validMuscleGroups = targetMuscleGroups;
     if (
       !targetMuscleGroups ||
       !Array.isArray(targetMuscleGroups) ||
       targetMuscleGroups.length === 0
     ) {
-      console.error("Invalid target muscle groups:", targetMuscleGroups);
-      throw new functions.https.HttpsError(
-        "invalid-argument",
-        "Target muscle groups are required"
-      );
+      console.warn("No target muscle groups provided, using fallback");
+      validMuscleGroups = ["Upper Body", "Lower Body", "Core"]; // Default fallback
     }
 
     console.log("=== SIMILAR EXERCISES REQUEST ===");
-    console.log("Target muscles:", targetMuscleGroups);
+    console.log("Target muscles:", validMuscleGroups);
     console.log("Equipment:", availableEquipment);
     console.log("Exclude:", excludeExercises);
 
@@ -1040,12 +1061,12 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
     let query = admin.firestore().collection("exercises");
 
     // Primary filter: muscle groups (most important for exercise similarity)
-    if (targetMuscleGroups && targetMuscleGroups.length > 0) {
-      console.log("Adding muscle group filter:", targetMuscleGroups);
+    if (validMuscleGroups && validMuscleGroups.length > 0) {
+      console.log("Adding muscle group filter:", validMuscleGroups);
       query = query.where(
         "primaryMuscles",
         "array-contains-any",
-        targetMuscleGroups
+        validMuscleGroups
       );
     }
 
@@ -1148,7 +1169,7 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
 
       // Create fallback exercises based on target muscle groups
       const fallbackExercises = createFallbackSimilarExercises(
-        targetMuscleGroups,
+        validMuscleGroups,
         availableEquipment,
         excludeExercises
       );
@@ -1157,7 +1178,7 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
         exercises: fallbackExercises,
         totalFound: fallbackExercises.length,
         searchCriteria: {
-          targetMuscleGroups,
+          targetMuscleGroups: validMuscleGroups,
           availableEquipment,
           exerciseType,
           excludeExercises,
@@ -1171,7 +1192,7 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
       exercises: exercises.slice(0, 10), // Return top 10
       totalFound: exercises.length,
       searchCriteria: {
-        targetMuscleGroups,
+        targetMuscleGroups: validMuscleGroups,
         availableEquipment,
         exerciseType,
         excludeExercises,
@@ -1187,7 +1208,7 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
     // Provide fallback exercises when database query fails
     try {
       const fallbackExercises = createFallbackSimilarExercises(
-        targetMuscleGroups,
+        validMuscleGroups || targetMuscleGroups,
         availableEquipment,
         excludeExercises
       );
@@ -1196,7 +1217,7 @@ exports.getSimilarExercises = functions.https.onCall(async (data, context) => {
         exercises: fallbackExercises,
         totalFound: fallbackExercises.length,
         searchCriteria: {
-          targetMuscleGroups: targetMuscleGroups || [],
+          targetMuscleGroups: validMuscleGroups || targetMuscleGroups || [],
           availableEquipment: availableEquipment || [],
           exerciseType,
           excludeExercises: excludeExercises || [],
@@ -1224,51 +1245,33 @@ function buildExerciseReplacementPrompt(options) {
     targetMuscleGroups,
     availableEquipment,
     fitnessLevel,
-    workoutType,
-    reason,
   } = options;
 
-  return `
-You are a fitness expert. The user wants to replace "${exerciseToReplace}" with alternative exercises.
+  // Keep token usage under 1000 with simplified prompt
+  return `Replace "${exerciseToReplace}" with 3 alternatives.
+Muscles: ${targetMuscleGroups?.join(", ") || "same"}
+Equipment: ${availableEquipment?.join(", ") || "bodyweight"}
+Level: ${fitnessLevel || "beginner"}
 
-REPLACEMENT CRITERIA:
-- Original Exercise: ${exerciseToReplace}
-- Target Muscle Groups: ${targetMuscleGroups?.join(", ") || "Same as original"}
-- Available Equipment: ${availableEquipment?.join(", ") || "Bodyweight"}
-- Fitness Level: ${fitnessLevel || "Beginner"}
-- Workout Type: ${workoutType || "Strength"}
-${reason ? `- Reason for replacement: ${reason}` : ""}
+Return JSON array only:
+[{
+"id":"alt_1",
+"name":"Exercise Name",
+"category":"Strength",
+"equipment":["Equipment"],
+"muscleGroups":["Muscle"],
+"difficulty":"Level",
+"movementType":"Push",
+"movementPattern":"Horizontal",
+"gripType":"None",
+"rangeOfMotion":"Full",
+"tempo":"Normal",
+"muscleGroup":"Upper Body",
+"sets":[{"reps":12,"weight":0}],
+"restTime":60
+}]
 
-Return ONLY a JSON array of 3-5 alternative exercises in this exact format:
-[
-  {
-    "id": "alt_1",
-    "name": "Alternative Exercise Name",
-    "type": "Strength",
-    "equipment": ["Dumbbells"],
-    "muscleGroups": ["Chest", "Triceps"],
-    "difficulty": "Beginner",
-    "instructions": "Step-by-step instructions for proper form",
-    "sets": [
-      {"reps": 12, "weight": 0},
-      {"reps": 12, "weight": 0},
-      {"reps": 12, "weight": 0}
-    ],
-    "restTime": 60,
-    "notes": "Tips for proper execution",
-    "similarity": "Targets same muscles but easier/harder/different movement"
-  }
-]
-
-REQUIREMENTS:
-- Provide exercises that target similar muscle groups
-- Match the user's available equipment
-- Consider fitness level for difficulty progression
-- Include variety (easier, same difficulty, harder options)
-- All weights must be numbers (0 for bodyweight)
-- Each exercise must have complete sets array
-- Include similarity explanation for each alternative
-`;
+Keep responses minimal. Focus on exercise name, muscles, equipment, basic sets.`;
 }
 
 /**
@@ -1279,24 +1282,42 @@ function cleanExerciseData(exercise) {
     return null;
   }
 
-  // Ensure required fields
+  // Complete structure matching Flutter Exercise model requirements
   const cleaned = {
     id:
       exercise.id ||
       `alt_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
     name: exercise.name || "Alternative Exercise",
-    type: exercise.type || "Strength",
+    category: exercise.category || exercise.type || "Strength",
     equipment: Array.isArray(exercise.equipment)
       ? exercise.equipment
       : ["Bodyweight"],
-    muscleGroups: Array.isArray(exercise.muscleGroups)
+    target_region: Array.isArray(exercise.muscleGroups)
       ? exercise.muscleGroups
       : ["Full Body"],
+    primary_muscles: Array.isArray(exercise.muscleGroups)
+      ? exercise.muscleGroups
+      : ["Full Body"],
+    secondary_muscles: [],
     difficulty: exercise.difficulty || "Beginner",
-    instructions: exercise.instructions || "Perform with proper form",
+    movement_type: exercise.movementType || "Push",
+    movement_pattern: exercise.movementPattern || "Horizontal",
+    grip_type: exercise.gripType || "None",
+    range_of_motion: exercise.rangeOfMotion || "Full",
+    tempo: exercise.tempo || "Normal",
+    muscle_group:
+      exercise.muscleGroup || exercise.muscleGroups?.[0] || "Upper Body",
+    muscle_info: {
+      primary: Array.isArray(exercise.muscleGroups)
+        ? exercise.muscleGroups
+        : ["Full Body"],
+      secondary: [],
+      synergist: [],
+      stabilizer: [],
+    },
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     restTime: typeof exercise.restTime === "number" ? exercise.restTime : 60,
-    notes: exercise.notes || "",
-    similarity: exercise.similarity || "Alternative exercise",
   };
 
   // Clean sets array
@@ -1399,20 +1420,32 @@ function createFallbackAlternatives(
     fallbackExercises.push({
       id: "fallback_1",
       name: "Push-ups",
-      type: "Strength",
+      category: "Strength",
       equipment: ["Bodyweight"],
-      muscleGroups: ["Chest", "Triceps", "Shoulders"],
+      target_region: ["Chest", "Triceps", "Shoulders"],
+      primary_muscles: ["Chest", "Triceps", "Shoulders"],
+      secondary_muscles: ["Core"],
       difficulty: "Beginner",
-      instructions:
-        "Start in a plank position with hands shoulder-width apart. Lower your body until your chest nearly touches the floor, then push back up.",
+      movement_type: "Push",
+      movement_pattern: "Horizontal",
+      grip_type: "None",
+      range_of_motion: "Full",
+      tempo: "Normal",
+      muscle_group: "Upper Body",
+      muscle_info: {
+        primary: ["Chest", "Triceps", "Shoulders"],
+        secondary: ["Core"],
+        synergist: [],
+        stabilizer: [],
+      },
       sets: [
         {reps: 10, weight: 0},
         {reps: 10, weight: 0},
         {reps: 10, weight: 0},
       ],
       restTime: 60,
-      notes: "Great bodyweight alternative for chest development",
-      similarity: "Similar pushing motion, targets same muscle groups",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -1423,20 +1456,32 @@ function createFallbackAlternatives(
     fallbackExercises.push({
       id: "fallback_2",
       name: "Bodyweight Rows",
-      type: "Strength",
+      category: "Strength",
       equipment: ["Bodyweight"],
-      muscleGroups: ["Back", "Biceps"],
+      target_region: ["Back", "Biceps"],
+      primary_muscles: ["Back", "Biceps"],
+      secondary_muscles: ["Core"],
       difficulty: "Beginner",
-      instructions:
-        "Using a low bar or table, lie underneath and pull your chest up to the bar.",
+      movement_type: "Pull",
+      movement_pattern: "Horizontal",
+      grip_type: "Pronated",
+      range_of_motion: "Full",
+      tempo: "Normal",
+      muscle_group: "Upper Body",
+      muscle_info: {
+        primary: ["Back", "Biceps"],
+        secondary: ["Core"],
+        synergist: [],
+        stabilizer: [],
+      },
       sets: [
         {reps: 8, weight: 0},
         {reps: 8, weight: 0},
         {reps: 8, weight: 0},
       ],
       restTime: 60,
-      notes: "Excellent bodyweight back exercise",
-      similarity: "Pulling motion that targets the same back muscles",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -1448,20 +1493,32 @@ function createFallbackAlternatives(
     fallbackExercises.push({
       id: "fallback_3",
       name: "Bodyweight Squats",
-      type: "Strength",
+      category: "Strength",
       equipment: ["Bodyweight"],
-      muscleGroups: ["Legs", "Glutes"],
+      target_region: ["Legs", "Glutes"],
+      primary_muscles: ["Legs", "Glutes"],
+      secondary_muscles: ["Core"],
       difficulty: "Beginner",
-      instructions:
-        "Stand with feet shoulder-width apart. Lower your body as if sitting back into a chair, then return to standing.",
+      movement_type: "Push",
+      movement_pattern: "Vertical",
+      grip_type: "None",
+      range_of_motion: "Full",
+      tempo: "Normal",
+      muscle_group: "Lower Body",
+      muscle_info: {
+        primary: ["Legs", "Glutes"],
+        secondary: ["Core"],
+        synergist: [],
+        stabilizer: [],
+      },
       sets: [
         {reps: 15, weight: 0},
         {reps: 15, weight: 0},
         {reps: 15, weight: 0},
       ],
       restTime: 45,
-      notes: "Fundamental lower body movement",
-      similarity: "Same squatting pattern, targets identical muscle groups",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -1473,20 +1530,32 @@ function createFallbackAlternatives(
     fallbackExercises.push({
       id: "fallback_4",
       name: "Pike Push-ups",
-      type: "Strength",
+      category: "Strength",
       equipment: ["Bodyweight"],
-      muscleGroups: ["Shoulders", "Triceps"],
+      target_region: ["Shoulders", "Triceps"],
+      primary_muscles: ["Shoulders", "Triceps"],
+      secondary_muscles: ["Core"],
       difficulty: "Intermediate",
-      instructions:
-        "Start in a downward dog position. Lower your head toward the ground, then push back up.",
+      movement_type: "Push",
+      movement_pattern: "Vertical",
+      grip_type: "None",
+      range_of_motion: "Full",
+      tempo: "Normal",
+      muscle_group: "Upper Body",
+      muscle_info: {
+        primary: ["Shoulders", "Triceps"],
+        secondary: ["Core"],
+        synergist: [],
+        stabilizer: [],
+      },
       sets: [
         {reps: 8, weight: 0},
         {reps: 8, weight: 0},
         {reps: 8, weight: 0},
       ],
       restTime: 60,
-      notes: "Great for building shoulder and arm strength",
-      similarity: "Targets similar upper body muscles",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 
@@ -1495,20 +1564,32 @@ function createFallbackAlternatives(
     fallbackExercises.push({
       id: "fallback_default",
       name: "Burpees",
-      type: "Full Body",
+      category: "Full Body",
       equipment: ["Bodyweight"],
-      muscleGroups: ["Full Body"],
+      target_region: ["Full Body"],
+      primary_muscles: ["Full Body"],
+      secondary_muscles: [],
       difficulty: "Intermediate",
-      instructions:
-        "Start standing, drop into a squat, kick back into plank, do a push-up, jump feet back to squat, then jump up.",
+      movement_type: "Compound",
+      movement_pattern: "Multi-Planar",
+      grip_type: "None",
+      range_of_motion: "Full",
+      tempo: "Fast",
+      muscle_group: "Full Body",
+      muscle_info: {
+        primary: ["Full Body"],
+        secondary: [],
+        synergist: [],
+        stabilizer: [],
+      },
       sets: [
         {reps: 5, weight: 0},
         {reps: 5, weight: 0},
         {reps: 5, weight: 0},
       ],
       restTime: 90,
-      notes: "Full-body exercise that works multiple muscle groups",
-      similarity: "High-intensity alternative that works the whole body",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
   }
 

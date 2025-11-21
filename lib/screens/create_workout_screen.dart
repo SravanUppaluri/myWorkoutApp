@@ -376,9 +376,14 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Text(
       title,
-      style: AppTextStyles.headline3.copyWith(fontWeight: FontWeight.bold),
+      style: AppTextStyles.headline3.copyWith(
+        fontWeight: FontWeight.bold,
+        color: isDarkMode ? AppColors.darkOnSurface : AppColors.onSurface,
+      ),
     );
   }
 
@@ -436,12 +441,16 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   }
 
   Widget _buildDurationSelector() {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Estimated Duration: $_estimatedDuration minutes',
-          style: AppTextStyles.bodyText1,
+          style: AppTextStyles.bodyText1.copyWith(
+            color: isDarkMode ? AppColors.darkOnSurface : AppColors.onSurface,
+          ),
         ),
         const SizedBox(height: 8),
         Slider(
@@ -463,6 +472,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existingWorkout != null;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -513,14 +523,16 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                     const SizedBox(height: AppDimensions.marginLarge),
 
                     // Exercises Section
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildSectionTitle(
                           'Exercises (${_selectedExercises.length})',
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             if (_selectedExercises.length >= 2)
                               ElevatedButton.icon(
@@ -532,7 +544,6 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                                   foregroundColor: AppColors.onSecondary,
                                 ),
                               ),
-                            const SizedBox(width: 8),
                             ElevatedButton.icon(
                               onPressed: _addExercises,
                               icon: const Icon(Icons.library_add),
@@ -564,10 +575,12 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(AppDimensions.paddingMedium),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: isDarkMode ? AppColors.darkSurface : AppColors.background,
           boxShadow: [
             BoxShadow(
-              color: AppColors.darkGray.withValues(alpha: 0.1),
+              color: isDarkMode
+                  ? Colors.black.withValues(alpha: 0.3)
+                  : AppColors.darkGray.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, -2),
             ),
@@ -587,6 +600,9 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                           : _nameController.text,
                       style: AppTextStyles.bodyText1.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: isDarkMode
+                            ? AppColors.darkOnSurface
+                            : AppColors.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -594,7 +610,9 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                     Text(
                       '${_selectedExercises.length} exercise${_selectedExercises.length != 1 ? 's' : ''} • $_estimatedDuration min',
                       style: AppTextStyles.caption.copyWith(
-                        color: AppColors.darkGray,
+                        color: isDarkMode
+                            ? AppColors.darkOnSurface.withOpacity(0.7)
+                            : AppColors.darkGray,
                       ),
                     ),
                   ],

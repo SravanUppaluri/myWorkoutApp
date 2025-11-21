@@ -166,7 +166,7 @@ class WorkoutGenerationController extends ChangeNotifier {
 
         'personalizationLevel': 'standard',
         'requestTimeout': 30,
-        'sessionId': 'fast_${template.id}_${timestamp}',
+        'sessionId': 'fast_${template.id}_$timestamp',
         'generationType': 'optimized_template',
         'priority': 'speed',
         'excludeWarmup': true,
@@ -466,10 +466,5 @@ class WorkoutGenerationController extends ChangeNotifier {
   Future<List<String>> _getUserEquipment(String userId) async {
     // TODO: Implement user equipment fetching
     return ['Bodyweight'];
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

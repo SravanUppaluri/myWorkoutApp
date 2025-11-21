@@ -66,6 +66,12 @@ const db = admin.firestore();
  * Enhanced AI workout generation with Firebase MCP
  */
 router.post("/generate-workout", aiRateLimit, async (req, res) => {
+  const startTime = Date.now();
+  console.log(
+    "⏱️ [PERF] Request started at:",
+    new Date(startTime).toISOString()
+  );
+
   try {
     // Set CORS headers explicitly
     res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
@@ -120,23 +126,47 @@ router.post("/generate-workout", aiRateLimit, async (req, res) => {
       });
     }
 
-    // Get Firebase MCP context
-    console.log("🧠 Getting Firebase MCP workout context...");
-    const mcpContext = await firebaseMCP.getWorkoutContext({
-      userId,
-      muscleGroups: mappedMuscleGroups,
-      equipment,
-      fitnessLevel,
-      goal: mappedGoal,
-    });
+    // Get Firebase MCP context with timeout to prevent delays
+    console.log("🧠 Getting Firebase MCP workout context (with timeout)...");
+    let mcpContext = null;
+    try {
+      // Add 3-second timeout for MCP context to avoid delays
+      const contextPromise = firebaseMCP.getWorkoutContext({
+        userId,
+        muscleGroups: mappedMuscleGroups,
+        equipment,
+        fitnessLevel,
+        goal: mappedGoal,
+      });
 
-    console.log("✅ Firebase MCP context loaded:", {
-      exercises: mcpContext.exerciseRecommendations.length,
-      workouts: mcpContext.workoutHistory.length,
-      enhanced: mcpContext.enhanced,
-    });
+      mcpContext = await Promise.race([
+        contextPromise,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("MCP context timeout")), 3000)
+        ),
+      ]);
 
-    // Build enhanced prompt with Firebase MCP data and TOON optimization
+      const mcpTime = Date.now() - startTime;
+      console.log("✅ Firebase MCP context loaded:", {
+        exercises: mcpContext.exerciseRecommendations.length,
+        workouts: mcpContext.workoutHistory.length,
+        enhanced: mcpContext.enhanced,
+      });
+      console.log(`⏱️ [PERF] MCP context loaded in ${mcpTime}ms`);
+    } catch (error) {
+      console.warn(
+        "⚠️ MCP context failed or timed out, using minimal context:",
+        error.message
+      );
+      // Fallback to minimal context
+      mcpContext = {
+        exerciseRecommendations: [],
+        workoutHistory: [],
+        enhanced: false,
+      };
+    }
+
+    // Build enhanced prompt with Firebase MCP data
     const enhancedPrompt = buildEnhancedWorkoutPrompt({
       goal: mappedGoal,
       muscleGroups: mappedMuscleGroups,
@@ -146,25 +176,49 @@ router.post("/generate-workout", aiRateLimit, async (req, res) => {
       preferences: {
         ...preferences,
         focusArea,
-        instructions,
-        workoutType,
       },
       mcpContext,
       excludeWarmup,
-      workoutStructure,
-      useTOON: true, // Enable TOON optimization for this request
     });
 
-    console.log("🎯 Generated enhanced prompt length:", enhancedPrompt.length);
+    const promptTime = Date.now() - startTime;
+    const promptTokenEstimate = Math.ceil(enhancedPrompt.length / 4); // Rough estimate: 1 token ≈ 4 chars
+    console.log("🎯 Generated enhanced prompt:", {
+      length: enhancedPrompt.length,
+      estimatedTokens: promptTokenEstimate,
+      timeElapsed: `${promptTime}ms`,
+    });
 
-    // Generate workout with Gemini AI - use correct model name
-    const model = genAI.getGenerativeModel({model: "gemini-2.5-flash"});
+    // Generate workout with Gemini AI - optimized for speed
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        temperature: 0.3,
+        topK: 20,
+        topP: 0.8,
+      },
+    });
 
+    console.log("⏱️ Starting AI generation...");
     const result = await model.generateContent(enhancedPrompt);
+
+    const aiGenerationTime = Date.now() - startTime - promptTime;
     const response = await result.response;
     const workoutText = response.text();
 
-    console.log("✅ Gemini AI response received");
+    // Extract token usage information from response
+    const usageMetadata = response.usageMetadata || {};
+    const inputTokens = usageMetadata.promptTokenCount || 0;
+    const outputTokens = usageMetadata.candidatesTokenCount || 0;
+    const totalTokens = usageMetadata.totalTokenCount || 0;
+
+    console.log("✅ Gemini AI response received:", {
+      aiGenerationTime: `${aiGenerationTime}ms`,
+      inputTokens: inputTokens,
+      outputTokens: outputTokens,
+      totalTokens: totalTokens,
+      responseLength: workoutText.length,
+    });
 
     // Parse the generated workout
     const parsedWorkout = parseWorkoutResponse(workoutText, {
@@ -188,30 +242,61 @@ router.post("/generate-workout", aiRateLimit, async (req, res) => {
       },
     };
 
-    // Save generated workout to Firestore if userId provided
+    // Save generated workout to Firestore asynchronously (non-blocking)
     if (userId) {
-      try {
-        await saveWorkoutToFirestore(userId, enhancedWorkout);
-        console.log("💾 Workout saved to Firestore for user:", userId);
-      } catch (saveError) {
-        console.warn(
-          "⚠️ Could not save workout to Firestore:",
-          saveError.message
+      // Don't await - save in background to not block response
+      saveWorkoutToFirestore(userId, enhancedWorkout)
+        .then(() =>
+          console.log("💾 Workout saved to Firestore for user:", userId)
+        )
+        .catch((saveError) =>
+          console.warn(
+            "⚠️ Could not save workout to Firestore:",
+            saveError.message
+          )
         );
-      }
     }
 
+    // Calculate total response time
+    const totalTime = Date.now() - startTime;
+    const parsingTime = Date.now() - startTime - promptTime - aiGenerationTime;
+
+    console.log("⏱️ [PERF] Complete timing breakdown:", {
+      total: `${totalTime}ms`,
+      mcpContext: `${promptTime}ms`,
+      aiGeneration: `${aiGenerationTime}ms`,
+      parsing: `${parsingTime}ms`,
+      inputTokens: inputTokens || 0,
+      outputTokens: outputTokens || 0,
+      totalTokens: totalTokens || 0,
+    });
+
+    // Return immediately without waiting for save
     res.json({
       success: true,
       workout: enhancedWorkout,
-      mcpEnhanced: true,
+      mcpEnhanced: mcpContext?.enhanced || false,
+      performance: {
+        totalTime: `${totalTime}ms`,
+        inputTokens: inputTokens || 0,
+        outputTokens: outputTokens || 0,
+        totalTokens: totalTokens || 0,
+      },
     });
   } catch (error) {
-    console.error("❌ Firebase AI Workout Generation Error:", error);
+    const errorTime = Date.now() - startTime;
+    console.error("❌ Firebase AI Workout Generation Error:", {
+      error: error.message,
+      stack: error.stack,
+      timeElapsed: `${errorTime}ms`,
+    });
     res.status(500).json({
       error: "Failed to generate workout",
       message: error.message,
       enhanced: false,
+      performance: {
+        failedAt: `${errorTime}ms`,
+      },
     });
   }
 });
@@ -586,256 +671,51 @@ function buildEnhancedWorkoutPrompt(params) {
     preferences,
     mcpContext,
     excludeWarmup = false,
-    workoutStructure = "standard",
-    useTOON = false,
   } = params;
 
   // Extract focus area from preferences for enhanced targeting
   const focusArea = preferences?.focusArea;
-  const instructions = preferences?.instructions;
-  const workoutType = preferences?.workoutType;
 
   // Enhanced focus instructions if specific area is targeted
   let focusInstructions = "";
   if (focusArea && focusArea.toLowerCase() !== "full body") {
-    focusInstructions = `
-🎯 CRITICAL FOCUS REQUIREMENT: 
-This workout MUST primarily target ${focusArea.toUpperCase()} muscles.
-- At least 70% of exercises should directly target ${focusArea}
-- Include both compound and isolation movements for ${focusArea}
-- Prioritize exercises that specifically work ${focusArea}
-- For Arms: Include bicep curls, tricep dips, shoulder press, etc.
-- For Chest: Include push-ups, chest press, flyes, etc.
-- For Legs: Include squats, lunges, calf raises, etc.
-- For Core: Include planks, crunches, mountain climbers, etc.
-`;
+    focusInstructions = `Focus: 70% exercises for ${focusArea}`;
   }
 
-  const prompt = `Create a personalized ${duration}-minute workout for a ${fitnessLevel} level person.
-
-WORKOUT REQUIREMENTS:
-- Primary Goal: ${goal}
-- Target Muscle Groups: ${
-    muscleGroups.length > 0 ? muscleGroups.join(", ") : "Full body"
+  const prompt = `${duration}min ${fitnessLevel} workout. Target: ${
+    muscleGroups.length > 0 ? muscleGroups.join("/") : "Full body"
+  }. Equipment: ${
+    equipment.length > 0 ? equipment.slice(0, 2).join("/") : "None"
+  }. ${focusInstructions}${
+    mcpContext?.exerciseRecommendations?.length > 0
+      ? ` Use: ${mcpContext.exerciseRecommendations
+          .slice(0, 3)
+          .map((ex) => ex.name)
+          .join(", ")}.`
+      : ""
   }
-- Available Equipment: ${
-    equipment.length > 0 ? equipment.join(", ") : "Bodyweight only"
-  }
-- Fitness Level: ${fitnessLevel}
-- Duration: ${duration} minutes
-- Workout Type: ${workoutType || "General Fitness"}
-${focusInstructions}
-${instructions ? `\nAdditional Instructions: ${instructions}` : ""}
 
-FIREBASE MCP ENHANCED DATA:
-${
-  mcpContext.safetyGuidelines
-    ? `
-SAFETY GUIDELINES TO FOLLOW:
-${mcpContext.safetyGuidelines}
-`
-    : ""
-}
-
-RECOMMENDED EXERCISES FROM FIRESTORE DATABASE (${
-    mcpContext.exerciseRecommendations.length
-  } available, showing top 8):
-${
-  useTOON && mcpContext.exerciseRecommendations.length > 3
-    ? `EXERCISES_TOON:\n${exercisesToTOON(
-        mcpContext.exerciseRecommendations.slice(0, 8)
-      )}`
-    : mcpContext.exerciseRecommendations
-        .slice(0, 8) // ⚡ PERFORMANCE: Limit to top 8 exercises to reduce prompt size
-        .map(
-          (ex) =>
-            `- ${ex.name}: Targets ${
-              ex.targetMuscles?.join(", ") || "multiple muscles"
-            }, Equipment: ${
-              ex.equipment?.join(", ") || "bodyweight"
-            }, Difficulty: ${ex.difficulty || "moderate"}`
-          // ⚡ PERFORMANCE: Removed safety tips to reduce prompt size
-        )
-        .join("\n")
-}
-
-${
-  mcpContext.muscleGroupBalance
-    ? `
-MUSCLE GROUP BALANCE ANALYSIS:
-- Recommendation: ${mcpContext.muscleGroupBalance.recommendation}
-- Underworked: ${mcpContext.muscleGroupBalance.underworked.join(", ") || "None"}
-- Overworked: ${mcpContext.muscleGroupBalance.overworked.join(", ") || "None"}
-`
-    : ""
-}
-
-${
-  mcpContext.workoutHistory.length > 0
-    ? `
-RECENT WORKOUT HISTORY (Past 4 days - ${
-        mcpContext.workoutHistory.length
-      } workouts):
-${
-  useTOON && mcpContext.workoutHistory.length > 2
-    ? `WORKOUT_HISTORY_TOON:\n${workoutHistoryToTOON(
-        mcpContext.workoutHistory
-      )}`
-    : mcpContext.workoutHistory
-        .map(
-          (w) =>
-            `- ${w.date || "Recent"}: ${
-              w.muscleGroups?.join(", ") || "General"
-            } (${w.exercises?.length || 0} exercises)`
-        )
-        .join("\n")
-}
-
-AVOID repeating exercises from recent workouts unless necessary.
-`
-    : ""
-}
-
-INJURY PREVENTION TIPS FOR ${fitnessLevel.toUpperCase()}:
-${
-  mcpContext.injuryPrevention?.join("\n- ") ||
-  "Follow proper form and progression"
-}
-
-INSTRUCTIONS:
-1. Use PRIMARILY exercises from the Firestore database provided above
-2. Follow the safety guidelines strictly
-3. Consider the muscle group balance analysis
-4. Avoid recently performed exercises when possible
-5. Match the user's fitness level and available equipment
-6. ${
-    excludeWarmup
-      ? "DO NOT include warm-up exercises - focus ONLY on main workout exercises"
-      : "Structure the workout with proper warm-up and cool-down"
-  }
-7. IMPORTANT: Exercise names must be SHORT (1-3 words) - do NOT include instructions in the name field
-
-Return the workout in this EXACT JSON format with workout_plan structure:
+JSON:
 {
   "workout_plan": {
-    "name": "Concise Workout Name (e.g., 'Upper Body Strength', 'HIIT Cardio')",
-    "description": "Brief description of the workout",
+    "name": "Workout Name",
     "duration_minutes": ${duration},
-    "fitness_level": "${fitnessLevel}",
-    "goals": ["${goal}"],
-    "equipment_required": ${JSON.stringify(
-      equipment.length > 0 ? equipment : ["Bodyweight"]
-    )},
-    "target_muscles": ${JSON.stringify(
-      muscleGroups.length > 0 ? muscleGroups : ["Full Body"]
-    )},
-    "sections": [
-      {
-        "type": "Main Workout",
-        "duration_minutes": ${duration},
-        "format": "Circuit Training or Straight Sets",
-        "description": "Main workout exercises",
-        "sets": ${duration <= 30 ? 3 : duration <= 45 ? 4 : 5},
-        "rest_between_exercises_seconds": 30,
-        "rest_between_sets_seconds": 90,
-        "exercises": [
-          {
-            "name": "Exercise Name",
-            "duration_seconds": 45,
-            "reps_sets_info": "12-15 reps or time description",
-            "instructions": "Detailed exercise instructions",
-            "safety_considerations": "Important safety notes"
-          }
-        ]
-      }
-    ]
+    "sections": [{
+      "type": "Main",
+      "sets": 3,
+      "rest_between_exercises_seconds": 60,
+      "exercises": [
+        {"name": "Exercise", "reps": 12, "sets": 3, "rest": 60, "instructions": "How-to"}
+      ]
+    }]
   }
 }
 
-CRITICAL REQUIREMENTS:
-1. Use ONLY exercises from the Firestore database provided above
-2. Exercise names must be SHORT (1-3 words max)
-3. Main workout sets: ${
-    duration <= 30 ? "3 sets" : duration <= 45 ? "5 sets" : "6 sets"
-  } for ${duration} minutes
-4. Match the exact JSON structure shown above
-5. Use realistic duration_seconds and rep counts for the fitness level`;
+Include atmost ${
+    duration <= 30 ? "4" : duration <= 45 ? "6" : "8"
+  } exercises. Be as berif as possible. DONOT include warm-up, cool-down, streaching exercises.`;
 
   return prompt;
-}
-
-/**
- * Build smart workout prompt with user profile analysis
- */
-function buildSimplifiedSmartWorkoutPrompt(params) {
-  const {
-    duration = 45,
-    recentWorkoutNames = [],
-    excludeWarmup = false,
-  } = params;
-
-  const avoidList =
-    recentWorkoutNames.length > 0
-      ? `Avoid: ${recentWorkoutNames.join(", ")}. `
-      : "";
-
-  const exerciseCount = duration <= 30 ? 4 : duration <= 45 ? 6 : 8;
-
-  const prompt = `${avoidList}Generate ${duration}min bodyweight workout JSON:
-
-{
-  "workout_plan": {
-    "name": "Quick Workout Name",
-    "duration": ${duration},
-    "sections": [${
-      excludeWarmup
-        ? ""
-        : `
-      {
-        "name": "Warm-up",
-        "exercises": [
-          {"name": "Arm Circles", "sets": 1, "reps": "10", "weight": null, "rest": 30, "instructions": "Slow circles"}
-        ]
-      },`
-    }
-      {
-        "name": "Main Workout",
-        "exercises": [
-          {"name": "Push-ups", "sets": 3, "reps": "12", "weight": null, "rest": 60, "instructions": "Chest to floor"},
-          {"name": "Squats", "sets": 3, "reps": "15", "weight": null, "rest": 60, "instructions": "Thighs parallel"},
-          {"name": "Plank", "sets": 3, "reps": "30s", "weight": null, "rest": 60, "instructions": "Hold position"}${
-            exerciseCount > 3
-              ? ',\n          {"name": "Lunges", "sets": 3, "reps": "10", "weight": null, "rest": 60, "instructions": "Each leg"}'
-              : ""
-          }${
-    exerciseCount > 4
-      ? ',\n          {"name": "Mountain Climbers", "sets": 3, "reps": "20", "weight": null, "rest": 60, "instructions": "Fast pace"}'
-      : ""
-  }${
-    exerciseCount > 5
-      ? ',\n          {"name": "Burpees", "sets": 3, "reps": "8", "weight": null, "rest": 90, "instructions": "Full movement"}'
-      : ""
-  }
-        ]
-      }
-    ]
-  }
-}
-
-Replace with different exercises if avoiding similar recent workouts. Keep exact JSON format.`;
-
-  return prompt;
-}
-
-// Keep the original function for backward compatibility if needed
-function buildSmartWorkoutPrompt(params) {
-  // For now, redirect to simplified version
-  return buildSimplifiedSmartWorkoutPrompt({
-    duration: params.workoutParams?.duration || 45,
-    recentWorkoutNames:
-      params.workoutParams?.preferences?.recentWorkoutNames || [],
-    excludeWarmup: params.excludeWarmup || false,
-  });
 }
 
 /**
@@ -1470,40 +1350,6 @@ function exercisesToTOON(exercises) {
     console.warn("⚠️ Exercise TOON conversion failed:", error);
     return exercises
       .map((ex) => `${ex.name}: ${ex.targetMuscles?.join(",") || ""}`)
-      .join("\n");
-  }
-}
-
-/**
- * Convert recent workout history to TOON format
- */
-function workoutHistoryToTOON(workoutHistory) {
-  try {
-    if (!workoutHistory || workoutHistory.length === 0) return "";
-
-    // Check if TOON is available (async import completed)
-    if (!TOON?.stringify) {
-      console.warn("⚠️ TOON not loaded yet, using text fallback");
-      return workoutHistory
-        .map((w) => `${w.date}: ${w.muscleGroups?.join(",")}`)
-        .join("\n");
-    }
-
-    const toonData = {
-      headers: ["date", "muscleGroups", "exerciseCount", "duration"],
-      rows: workoutHistory.map((w) => [
-        w.date || "recent",
-        w.muscleGroups?.join(",") || "",
-        w.exercises?.length || 0,
-        w.duration || 0,
-      ]),
-    };
-
-    return TOON.stringify(toonData);
-  } catch (error) {
-    console.warn("⚠️ Workout history TOON conversion failed:", error);
-    return workoutHistory
-      .map((w) => `${w.date}: ${w.muscleGroups?.join(",")}`)
       .join("\n");
   }
 }

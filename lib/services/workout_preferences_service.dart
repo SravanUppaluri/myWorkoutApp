@@ -347,9 +347,4 @@ class WorkoutPreferencesService extends ChangeNotifier {
       'recommendations': getPersonalizedRecommendations(),
     };
   }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

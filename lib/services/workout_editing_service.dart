@@ -55,16 +55,21 @@ class WorkoutEditingService {
 
   /// Get similar exercises from the database
   Future<SimilarExercisesResult?> getSimilarExercises({
-    required List<String> targetMuscleGroups,
+    List<String>? targetMuscleGroups,
     required List<String> availableEquipment,
     String? exerciseType,
     List<String>? excludeExercises,
   }) async {
     try {
-      print('DEBUG: Getting similar exercises for: $targetMuscleGroups');
+      // Ensure we always have valid muscle groups
+      final validMuscleGroups = targetMuscleGroups?.isNotEmpty == true
+          ? targetMuscleGroups!
+          : ['Upper Body', 'Lower Body']; // Default fallback
+
+      print('DEBUG: Getting similar exercises for: $validMuscleGroups');
 
       final requestData = {
-        'targetMuscleGroups': targetMuscleGroups,
+        'targetMuscleGroups': validMuscleGroups,
         'availableEquipment': availableEquipment,
         if (exerciseType != null) 'exerciseType': exerciseType,
         if (excludeExercises != null) 'excludeExercises': excludeExercises,
@@ -185,6 +190,72 @@ class WorkoutEditingService {
 
     return 'Push'; // Default
   }
+
+  /// Helper method to infer muscle groups from exercise name
+  List<String> inferMuscleGroupsFromExercise(String exerciseName) {
+    final name = exerciseName.toLowerCase();
+    List<String> muscleGroups = [];
+
+    // Upper body patterns
+    if (name.contains('push') ||
+        name.contains('press') ||
+        name.contains('chest')) {
+      muscleGroups.addAll(['Chest', 'Triceps', 'Shoulders']);
+    } else if (name.contains('pull') ||
+        name.contains('row') ||
+        name.contains('back')) {
+      muscleGroups.addAll(['Back', 'Biceps']);
+    } else if (name.contains('shoulder') || name.contains('raise')) {
+      muscleGroups.add('Shoulders');
+    } else if (name.contains('bicep') || name.contains('curl')) {
+      muscleGroups.add('Biceps');
+    } else if (name.contains('tricep') || name.contains('dip')) {
+      muscleGroups.add('Triceps');
+    }
+    // Lower body patterns
+    else if (name.contains('squat') ||
+        name.contains('lunge') ||
+        name.contains('leg')) {
+      muscleGroups.addAll(['Legs', 'Glutes']);
+    } else if (name.contains('deadlift') || name.contains('hamstring')) {
+      muscleGroups.addAll(['Hamstrings', 'Glutes']);
+    } else if (name.contains('calf')) {
+      muscleGroups.add('Calves');
+    }
+    // Core patterns
+    else if (name.contains('plank') ||
+        name.contains('crunch') ||
+        name.contains('abs') ||
+        name.contains('core')) {
+      muscleGroups.add('Core');
+    }
+    // Full body patterns
+    else if (name.contains('burpee') ||
+        name.contains('mountain') ||
+        name.contains('jumping')) {
+      muscleGroups.add('Full Body');
+    }
+
+    // If no specific pattern found, default to Upper Body
+    return muscleGroups.isEmpty ? ['Upper Body'] : muscleGroups;
+  }
+
+  /// Convenience method to get similar exercises for a specific exercise
+  Future<SimilarExercisesResult?> getSimilarExercisesForExercise({
+    required String exerciseName,
+    required List<String> availableEquipment,
+    String? exerciseType,
+    List<String>? excludeExercises,
+  }) async {
+    final inferredMuscleGroups = inferMuscleGroupsFromExercise(exerciseName);
+
+    return getSimilarExercises(
+      targetMuscleGroups: inferredMuscleGroups,
+      availableEquipment: availableEquipment,
+      exerciseType: exerciseType,
+      excludeExercises: excludeExercises,
+    );
+  }
 }
 
 /// Result of exercise replacement request
@@ -245,19 +316,30 @@ class AlternativeExercise {
 
   factory AlternativeExercise.fromJson(Map<String, dynamic> json) {
     return AlternativeExercise(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      type: json['type'] as String,
-      equipment: List<String>.from(json['equipment'] as List),
-      muscleGroups: List<String>.from(json['muscleGroups'] as List),
-      difficulty: json['difficulty'] as String,
-      instructions: json['instructions'] as String,
-      sets: (json['sets'] as List<dynamic>)
-          .map((set) => ExerciseSet.fromJson(set as Map<String, dynamic>))
-          .toList(),
-      restTime: json['restTime'] as int,
-      notes: json['notes'] as String,
-      similarity: json['similarity'] as String,
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? 'Unknown Exercise',
+      type:
+          json['type']?.toString() ??
+          json['category']?.toString() ??
+          'Strength',
+      equipment: json['equipment'] != null
+          ? List<String>.from(json['equipment'] as List)
+          : ['Bodyweight'],
+      muscleGroups: json['muscleGroups'] != null
+          ? List<String>.from(json['muscleGroups'] as List)
+          : (json['target_region'] != null
+                ? List<String>.from(json['target_region'] as List)
+                : ['Full Body']),
+      difficulty: json['difficulty']?.toString() ?? 'Beginner',
+      instructions: json['instructions']?.toString() ?? '',
+      sets: json['sets'] != null
+          ? (json['sets'] as List<dynamic>)
+                .map((set) => ExerciseSet.fromJson(set as Map<String, dynamic>))
+                .toList()
+          : [ExerciseSet(reps: 12, weight: 0)],
+      restTime: json['restTime'] as int? ?? 60,
+      notes: json['notes']?.toString() ?? '',
+      similarity: json['similarity']?.toString() ?? 'Alternative exercise',
     );
   }
 }

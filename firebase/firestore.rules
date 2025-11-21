@@ -9,6 +9,17 @@ service cloud.firestore {
       allow write: if false; // Only admin/server can modify exercises
     }
     
+    // AI Generated exercises - allow read for all authenticated users, write from server
+    match /ai_generated_exercises/{exerciseId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only server/cloud functions can write
+    }
+    
+    // User's personal AI exercises - users can read/write their own AI exercises
+    match /user_ai_exercises/{userId}/exercises/{exerciseId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
     // Allow read access to safety guidelines for all authenticated users
     match /safety_guidelines/{guidelineId} {
       allow read: if request.auth != null;
